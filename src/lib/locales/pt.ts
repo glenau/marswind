@@ -1,0 +1,154 @@
+import type { Dictionary } from "./en";
+
+const pt: Dictionary = {
+  strings: {
+    "stage.audio": "Áudio",
+    "stage.recognition": "Reconhecimento",
+    "stage.translation": "Tradução",
+    "stage.notCapturing": "Sem captura",
+    "stage.notRunning": "Parado",
+    "meter.level": "Nível de entrada",
+    "action.start": "Começar a ouvir",
+    "action.stop": "Parar",
+    "action.working": "A iniciar…",
+    "action.history": "Histórico",
+    "action.settings": "Definições",
+    "action.clear": "Limpar",
+    "action.dismiss": "Ocultar",
+    "action.refresh": "Atualizar",
+    "action.delete": "Eliminar",
+    "action.play": "Reproduzir",
+    "action.text": "Texto",
+    "action.hideText": "Ocultar o texto",
+    "action.install": "Instalar",
+    "action.remove": "Remover",
+    "action.cancel": "Cancelar",
+    "action.github": "O projeto no GitHub",
+
+    "transcript.original": "Original",
+    "transcript.translation": "Tradução",
+    "transcript.into": "Traduzido para",
+    "transcript.toLanguage": "para",
+    "transcript.emptySource":
+      "Carregue em «Começar a ouvir» e reproduza algo falado - ou um dos exemplos nas definições. O que for dito aparece aqui.",
+    "transcript.emptyTarget":
+      "A tradução aparece aqui, um pedaço de frase de cada vez, enquanto a pessoa ainda fala.",
+    "transcript.translating": "a traduzir…",
+    "transcript.notTranslated": "- sem tradução",
+    "transcript.toBottom": "Seguir a última linha",
+
+    "settings.general": "Geral",
+    "settings.models": "Modelos",
+    "settings.about": "Sobre",
+    "settings.audioTitle": "Áudio",
+    "settings.audioNote":
+      "De onde vem o som. Tudo o que este Mac reproduz, ou apenas uma aplicação.",
+    "settings.audio": "Fonte de áudio",
+    "settings.recognition": "Reconhecimento de fala",
+    "settings.recognitionNote":
+      "Transforma em texto aquilo que o computador está a reproduzir. Precisa de um modelo de reconhecimento.",
+    "settings.translation": "Tradução",
+    "settings.translationNote":
+      "Passa o texto reconhecido para outra língua. Precisa de um modelo de tradução - diferente do de cima.",
+    "settings.on": "Ligada",
+    "settings.showOriginal": "Mostrar o original ao lado da tradução",
+    "settings.locked": "Pare de ouvir para alterar estas definições.",
+    "settings.noModel": "Nenhum modelo instalado",
+    "settings.needVad":
+      "Instale abaixo o modelo de deteção de voz - o reconhecimento precisa dele.",
+    "settings.needAsr": "Instale abaixo um modelo de reconhecimento.",
+    "settings.needMt": "Instale abaixo um modelo de tradução.",
+    "settings.detect": "Detetar automaticamente",
+    "settings.model": "Modelo",
+    "settings.interface": "Interface",
+    "settings.interfaceNote":
+      "O aspeto da janela. Nada disto muda o que a aplicação faz com o som.",
+    "settings.language": "Idioma",
+    "settings.theme": "Tema",
+    "settings.textSize": "Tamanho do texto",
+    "settings.samples": "Experimentar sem procurar um vídeo",
+    "settings.samplesNote":
+      "Reproduz um excerto gravado pelas colunas, por isso segue o mesmo caminho que qualquer outro som. Comece por ligar a escuta.",
+
+    "theme.dark": "Escuro",
+    "theme.light": "Claro",
+    "theme.system": "Igual ao sistema",
+
+    "about.title": "Sobre",
+    "about.tagline":
+      "Legendas e tradução em direto para tudo o que este computador reproduz. O reconhecimento e a tradução correm aqui - sem conta, sem chave de API e sem nada sair da máquina.",
+    "about.version": "Versão",
+    "about.runtime": "Ambiente",
+    "about.license": "Licença",
+    "about.source": "Código-fonte",
+    "about.issues": "Comunicar um problema",
+    "about.licenseFile": "Ler a licença",
+    "about.notices": "Licenças de terceiros",
+    "about.built": "Construído com",
+    "about.how": "Como funciona",
+    "about.howCapture":
+      "O som vem do próprio macOS, através de uma derivação de processo do Core Audio: aquilo que o Mac já está a reproduzir, tudo de uma vez ou apenas uma aplicação. Sem controlador de áudio virtual, sem microfone, e sem alterar nada do que ouve.",
+    "about.howPipeline":
+      "Esse fluxo é misturado para mono a 16 kHz e fica em memória. O Silero VAD corta-o em frases, o whisper.cpp transforma-as em texto na GPU e o llama.cpp traduz num processo separado enquanto a pessoa ainda fala. O áudio em si nunca é escrito no disco nem sai deste Mac.",
+
+    "models.title": "Modelos",
+    "models.note":
+      "Tudo corre nesta máquina, por isso cada modelo é um ficheiro neste disco. Instale um para reconhecer e outro para traduzir.",
+    "models.onDisk": "no disco",
+    "models.forRecognition": "reconhecimento",
+    "models.forTranslation": "tradução",
+    "models.forVad": "deteção de voz",
+    "models.recommended": "recomendado",
+    "models.required": "obrigatório",
+    "models.installed": "instalado",
+    "models.of": "de",
+
+    "history.empty":
+      "Ainda não há sessões. Sempre que começa a ouvir, aquilo que é reconhecido e traduzido fica escrito aqui.",
+    "history.pick": "Escolha uma sessão à esquerda.",
+    "history.loading": "A carregar…",
+    "history.rows": "linhas",
+    "history.words": "palavras",
+    "history.exportText": "Exportar texto",
+    "history.exportSrt": "Exportar legendas",
+    "history.exportJson": "Exportar JSON",
+    "history.saved": "Guardado em",
+    "history.noModel": "sem modelo de reconhecimento",
+    "history.notTranslated": "sem tradução",
+    "history.segment": "segmento",
+    "history.segments": "segmentos",
+
+    "size.small": "Pequeno",
+    "size.medium": "Médio",
+    "size.large": "Grande",
+    "size.huge": "Muito grande",
+  },
+  phrases: {
+    idle: [
+      "Olá. Traduzimos alguma coisa?",
+      "Ponha qualquer coisa em que se fale",
+      "Pronto quando quiser",
+      "Que sossego. Continuo a ouvir na mesma",
+      "Um clique e as palavras começam a chegar",
+      "Nada do que puser sai deste Mac",
+      "O que vamos ver hoje?",
+      "Um podcast, uma aula, uma chamada - para mim é igual",
+      "À espera da primeira frase",
+      "Ligue a escuta e vamos a isto",
+    ],
+    live: [
+      "A ouvir com atenção…",
+      "A tentar perceber as palavras…",
+      "A apanhar frases no ar…",
+      "Aquilo foi mesmo uma palavra…",
+      "A folhear o meu dicionário…",
+      "A acompanhar, mais ou menos…",
+      "Traduzo mais depressa do que penso…",
+      "Todo ouvidos, sem distrações…",
+      "Já quase tenho essa frase…",
+      "A seguir o fio…",
+    ],
+  },
+};
+
+export default pt;

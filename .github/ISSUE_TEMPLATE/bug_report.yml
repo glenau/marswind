@@ -1,0 +1,76 @@
+name: Bug report
+description: Something does not work
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time. Please check the open issues first - and if
+        the problem is bad recognition or bad translation, read
+        [tests/README.md](../blob/main/tests/README.md) first: the accuracy this
+        pipeline reaches, and how much it varies run to run, is measured and
+        known.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: And what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce it
+      placeholder: |
+        1. Start listening on the whole system
+        2. Play the `news-bulletin` sample from Settings
+        3. …
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Settings → About, at the bottom. Or the commit you built.
+      placeholder: "0.1.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: macOS version and machine
+      placeholder: "macOS 15.2, M2 Pro, 16 GB"
+    validations:
+      required: true
+
+  - type: input
+    id: models
+    attributes:
+      label: Models in use
+      description: Settings → Speech recognition and Translation.
+      placeholder: "large-v3-turbo-q5_0 + qwen3-4b-instruct-q4"
+
+  - type: dropdown
+    id: source
+    attributes:
+      label: Audio source
+      options:
+        - Whole system
+        - A single application
+        - A sample clip from Settings
+        - Not audio-related
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Anything in the log
+      description: >
+        Either launch from a terminal with
+        `/Applications/Marswind.app/Contents/MacOS/Marswind`, or run
+        `log stream --predicate 'process == "Marswind"' --level info` while
+        reproducing it. Pasted as code, so no backticks are needed.
+      render: shell

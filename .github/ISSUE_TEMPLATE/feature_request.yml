@@ -1,0 +1,45 @@
+name: Feature request
+description: Suggest something the app should do
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please skim [docs/ARCHITECTURE.md](../blob/main/docs/ARCHITECTURE.md)
+        first. A few good ideas were built, measured and then removed, and the
+        numbers behind those decisions are written down there.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: What are you trying to do
+      description: >
+        The situation, not the solution. "I watch lectures and lose the thread
+        when I look away" says more than "add a pause button".
+    validations:
+      required: true
+
+  - type: textarea
+    id: idea
+    attributes:
+      label: What you think would fix it
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: What you tried instead
+      description: Other apps, other settings, doing it by hand.
+
+  - type: checkboxes
+    id: offline
+    attributes:
+      label: One constraint
+      description: >
+        Everything in this app runs on the user's machine. A feature that needs
+        a cloud service, an account or an API key is out of scope, however good
+        it would be.
+      options:
+        - label: This works without a network connection.
+          required: true

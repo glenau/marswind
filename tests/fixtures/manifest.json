@@ -1,0 +1,31 @@
+[
+  {
+    "name": "news-bulletin",
+    "voice": "Samantha",
+    "rate": 175,
+    "maxWer": 0.15,
+    "purpose": "Clear read at broadcast pace. The baseline: if this regresses, something is broken."
+  },
+  {
+    "name": "named-entities",
+    "voice": "Daniel",
+    "rate": 165,
+    "maxWer": 0.3,
+    "purpose": "Proper nouns, numbers and dates. Threshold is deliberately loose: whisper writes spoken numbers as digits, which scores as an error against a word-for-word reference even when it heard correctly."
+  },
+  {
+    "name": "fast-conversational",
+    "voice": "Karen",
+    "rate": 205,
+    "maxWer": 0.2,
+    "purpose": "Fast, long sentences with few pauses. Stresses the streaming path, where phrases never end and the window keeps growing."
+  },
+  {
+    "name": "two-speakers",
+    "voice": "Samantha",
+    "secondVoice": "Daniel",
+    "rate": 180,
+    "maxWer": 0.2,
+    "purpose": "Voice changes mid-clip, alternating every sentence. Checks that a new speaker does not derail the committed text."
+  }
+]

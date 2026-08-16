@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Marswind",
+  "version": "0.1.0",
+  "identifier": "com.marswind.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../build"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Marswind",
+        "width": 1040,
+        "height": 760,
+        "minWidth": 560,
+        "minHeight": 420,
+        "resizable": true,
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "publisher": "Gleb Naumov",
+    "copyright": "Copyright © 2026 Gleb Naumov. MIT licensed.",
+    "category": "Utility",
+    "homepage": "https://github.com/glenau/marswind",
+    "licenseFile": "../LICENSE",
+    "shortDescription": "Offline live subtitles and translation",
+    "longDescription": "Marswind listens to whatever your computer is playing - a video, a call, a local file - recognizes the speech and translates it as the speaker talks. Recognition and translation both run on this machine: no account, no API key, and the audio is never written to disk or sent anywhere.",
+    "macOS": {
+      "minimumSystemVersion": "14.4"
+    },
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "externalBin": [
+      "binaries/marswind-translator"
+    ],
+    "resources": {
+      "samples/*": "samples/",
+      "../LICENSE": "LICENSE",
+      "../THIRD-PARTY-NOTICES.md": "THIRD-PARTY-NOTICES.md"
+    }
+  }
+}

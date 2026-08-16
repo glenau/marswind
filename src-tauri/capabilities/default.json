@@ -1,0 +1,12 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The main window. Deliberately the smallest set that works: core, plus the opener plugin's default, which carries opening a URL (the links in About and on the model rows) and revealing a file in Finder (the History view's exports). allow-open-path is absent on purpose - nothing calls openPath, and granting it would let the frontend hand an arbitrary file to whatever the system thinks should open it.",
+  "windows": [
+    "main"
+  ],
+  "permissions": [
+    "core:default",
+    "opener:default"
+  ]
+}

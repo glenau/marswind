@@ -1,0 +1,29 @@
+.DS_Store
+node_modules
+/build
+/.svelte-kit
+/package
+.env
+.env.*
+!.env.example
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+
+# models and test artifacts
+/models/
+/testdata/
+
+# sidecar binaries, produced by scripts/build-sidecar.sh
+/src-tauri/binaries/
+/translator/target/
+
+# the rasterized icon, produced by scripts/build-icons.sh from assets/icon.svg.
+# The icon set it feeds - src-tauri/icons/ - is committed; this step is not.
+/assets/icon.png
+
+# editor and assistant scratch. .vscode/ is committed because it is two files
+# that point at the right extensions; everything below is one person's setup.
+/.claude/
+/.idea/
+/.zed/
+*.code-workspace

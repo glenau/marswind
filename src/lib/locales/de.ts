@@ -1,0 +1,154 @@
+import type { Dictionary } from "./en";
+
+const de: Dictionary = {
+  strings: {
+    "stage.audio": "Ton",
+    "stage.recognition": "Erkennung",
+    "stage.translation": "Übersetzung",
+    "stage.notCapturing": "Keine Aufnahme",
+    "stage.notRunning": "Läuft nicht",
+    "meter.level": "Eingangspegel",
+    "action.start": "Zuhören starten",
+    "action.stop": "Stoppen",
+    "action.working": "Startet…",
+    "action.history": "Verlauf",
+    "action.settings": "Einstellungen",
+    "action.clear": "Leeren",
+    "action.dismiss": "Ausblenden",
+    "action.refresh": "Aktualisieren",
+    "action.delete": "Löschen",
+    "action.play": "Abspielen",
+    "action.text": "Text",
+    "action.hideText": "Text ausblenden",
+    "action.install": "Installieren",
+    "action.remove": "Entfernen",
+    "action.cancel": "Abbrechen",
+    "action.github": "Das Projekt auf GitHub",
+
+    "transcript.original": "Original",
+    "transcript.translation": "Übersetzung",
+    "transcript.into": "Übersetzt ins",
+    "transcript.toLanguage": "ins",
+    "transcript.emptySource":
+      "Drücken Sie „Zuhören starten“ und spielen Sie etwas Gesprochenes ab - oder eines der Beispiele in den Einstellungen. Was gesagt wird, erscheint hier.",
+    "transcript.emptyTarget":
+      "Hier erscheint die Übersetzung, Satzteil für Satzteil, während noch gesprochen wird.",
+    "transcript.translating": "übersetzt…",
+    "transcript.notTranslated": "- nicht übersetzt",
+    "transcript.toBottom": "Der neuesten Zeile folgen",
+
+    "settings.general": "Allgemein",
+    "settings.models": "Modelle",
+    "settings.about": "Über",
+    "settings.audioTitle": "Ton",
+    "settings.audioNote":
+      "Woher der Ton kommt. Entweder alles, was dieser Mac abspielt, oder eine einzelne App.",
+    "settings.audio": "Tonquelle",
+    "settings.recognition": "Spracherkennung",
+    "settings.recognitionNote":
+      "Macht aus dem, was der Rechner abspielt, Text. Braucht ein Erkennungsmodell.",
+    "settings.translation": "Übersetzung",
+    "settings.translationNote":
+      "Überträgt den erkannten Text in eine andere Sprache. Braucht ein Übersetzungsmodell - ein anderes als das oben.",
+    "settings.on": "An",
+    "settings.showOriginal": "Original neben der Übersetzung zeigen",
+    "settings.locked": "Zum Ändern zuerst das Zuhören beenden.",
+    "settings.noModel": "Kein Modell installiert",
+    "settings.needVad":
+      "Installieren Sie unten das Modell zur Sprachaktivitätserkennung - ohne es geht die Erkennung nicht.",
+    "settings.needAsr": "Installieren Sie unten ein Erkennungsmodell.",
+    "settings.needMt": "Installieren Sie unten ein Übersetzungsmodell.",
+    "settings.detect": "Automatisch erkennen",
+    "settings.model": "Modell",
+    "settings.interface": "Oberfläche",
+    "settings.interfaceNote":
+      "Wie das Fenster aussieht. Nichts davon ändert, was die App mit dem Ton macht.",
+    "settings.language": "Sprache",
+    "settings.theme": "Erscheinungsbild",
+    "settings.textSize": "Schriftgröße",
+    "settings.samples": "Ausprobieren, ohne ein Video zu suchen",
+    "settings.samplesNote":
+      "Spielt einen aufgenommenen Ausschnitt über die Lautsprecher ab, sodass er denselben Weg nimmt wie alles andere. Starten Sie vorher das Zuhören.",
+
+    "theme.dark": "Dunkel",
+    "theme.light": "Hell",
+    "theme.system": "Wie im System",
+
+    "about.title": "Über",
+    "about.tagline":
+      "Live-Untertitel und Übersetzung für alles, was dieser Rechner abspielt. Erkennung und Übersetzung laufen hier - ohne Konto, ohne API-Schlüssel, und nichts verlässt das Gerät.",
+    "about.version": "Version",
+    "about.runtime": "Laufzeitumgebung",
+    "about.license": "Lizenz",
+    "about.source": "Quellcode",
+    "about.issues": "Problem melden",
+    "about.licenseFile": "Lizenz lesen",
+    "about.notices": "Drittanbieter-Lizenzen",
+    "about.built": "Gebaut mit",
+    "about.how": "Wie es funktioniert",
+    "about.howCapture":
+      "Der Ton kommt direkt von macOS, über einen Core-Audio-Process-Tap: genau das, was Ihr Mac ohnehin abspielt - alles auf einmal oder eine einzelne App. Kein virtueller Audiotreiber, kein Mikrofon, und an dem, was Sie hören, ändert sich nichts.",
+    "about.howPipeline":
+      "Dieser Strom wird auf Mono bei 16 kHz gemischt und bleibt im Arbeitsspeicher. Silero VAD schneidet ihn in Sätze, whisper.cpp macht auf der GPU Text daraus, und llama.cpp übersetzt in einem eigenen Prozess, während noch gesprochen wird. Der Ton selbst wird nie auf die Festplatte geschrieben und verlässt diesen Mac nie.",
+
+    "models.title": "Modelle",
+    "models.note":
+      "Alles läuft auf diesem Rechner, also ist jedes Modell eine Datei auf dieser Festplatte. Installieren Sie eines für die Erkennung und eines für die Übersetzung.",
+    "models.onDisk": "auf der Festplatte",
+    "models.forRecognition": "Erkennung",
+    "models.forTranslation": "Übersetzung",
+    "models.forVad": "Sprachaktivität",
+    "models.recommended": "empfohlen",
+    "models.required": "erforderlich",
+    "models.installed": "installiert",
+    "models.of": "von",
+
+    "history.empty":
+      "Noch keine Sitzungen. Jedes Mal, wenn Sie das Zuhören starten, wird hier festgehalten, was erkannt und übersetzt wurde.",
+    "history.pick": "Wählen Sie links eine Sitzung.",
+    "history.loading": "Wird geladen…",
+    "history.rows": "Zeilen",
+    "history.words": "Wörter",
+    "history.exportText": "Text exportieren",
+    "history.exportSrt": "Untertitel exportieren",
+    "history.exportJson": "JSON exportieren",
+    "history.saved": "Gespeichert unter",
+    "history.noModel": "kein Erkennungsmodell",
+    "history.notTranslated": "nicht übersetzt",
+    "history.segment": "Abschnitt",
+    "history.segments": "Abschnitte",
+
+    "size.small": "Klein",
+    "size.medium": "Mittel",
+    "size.large": "Groß",
+    "size.huge": "Sehr groß",
+  },
+  phrases: {
+    idle: [
+      "Hallo. Übersetzen wir etwas?",
+      "Spielen Sie irgendetwas ab, in dem geredet wird",
+      "Bereit, wenn Sie es sind",
+      "Still hier. Ich höre trotzdem zu",
+      "Ein Druck, und die Wörter kommen",
+      "Nichts davon verlässt diesen Mac",
+      "Was schauen wir heute?",
+      "Podcast, Vorlesung, Videocall - mir alles gleich",
+      "Ich warte auf den ersten Satz",
+      "Zuhören starten, und los geht's",
+    ],
+    live: [
+      "Höre genau hin…",
+      "Versuche, die Wörter zu verstehen…",
+      "Fange Sätze im Flug…",
+      "Das war eindeutig ein Wort…",
+      "Blättere im Wörterbuch…",
+      "Komme mit, so ungefähr…",
+      "Übersetze schneller, als ich denken kann…",
+      "Ganz Ohr, keine Ablenkung…",
+      "Gleich habe ich den Satz…",
+      "Ich bleibe dran…",
+    ],
+  },
+};
+
+export default de;

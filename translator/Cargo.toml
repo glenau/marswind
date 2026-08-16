@@ -1,0 +1,24 @@
+[package]
+name = "marswind-translator"
+version = "0.1.0"
+description = "Translation worker for Marswind"
+authors = ["Gleb Naumov"]
+license = "MIT"
+edition = "2021"
+
+# This lives in its own binary rather than inside the app for one hard reason:
+# whisper.cpp and llama.cpp each bundle their own copy of ggml, and linking both
+# into one executable silently corrupts whichever one loses the symbol race -
+# recognition starts emitting "!!!!!!!" instead of words. Separate processes
+# keep the two runtimes apart. See docs/ARCHITECTURE.md.
+
+[dependencies]
+llama-cpp-2 = { version = "0.1.153", default-features = false, features = ["metal"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+self_cell = "1"
+
+[profile.release]
+opt-level = 3
+lto = true
+strip = true

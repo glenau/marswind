@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%sveltekit.assets%/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="dark light" />
+    <title>Marswind</title>
+    <script>
+      // The theme, before anything is painted.
+      //
+      // The preference is applied by the app itself once it is running, which
+      // is one frame too late: a window that opens dark and turns light is the
+      // one thing a light theme must not do on every launch. The key is the one
+      // in `preferences.svelte.ts` - the only place in the app where a setting
+      // is read from two files, and worth it for the flash it costs otherwise.
+      try {
+        var stored = localStorage.getItem("marswind.ui.theme");
+        var light =
+          stored === "light" ||
+          (stored === "system" && matchMedia("(prefers-color-scheme: light)").matches);
+        document.documentElement.dataset.theme = light ? "light" : "dark";
+      } catch (e) {
+        document.documentElement.dataset.theme = "dark";
+      }
+    </script>
+    %sveltekit.head%
+  </head>
+  <body data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
+  </body>
+</html>

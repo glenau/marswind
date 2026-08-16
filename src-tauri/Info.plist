@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!-- The build number behind the version, which macOS prints beside it as
+	     "Version 0.1.0 (12)". Tauri fills both keys from one number in
+	     tauri.conf.json, so left alone the About window says the same thing
+	     twice. scripts/stamp-build.sh replaces this with the commit count on
+	     every bundled build; the 1 here is what a bare `tauri build` gets. -->
+	<key>CFBundleVersion</key>
+	<string>1</string>
+
+	<!-- Shown in the permission prompt raised by the first tap creation. -->
+	<key>NSAudioCaptureUsageDescription</key>
+	<string>Marswind needs to hear the audio your Mac plays so it can turn speech into live subtitles on your device. Nothing is recorded or sent anywhere.</string>
+</dict>
+</plist>

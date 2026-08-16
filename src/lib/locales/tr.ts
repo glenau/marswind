@@ -1,0 +1,153 @@
+import type { Dictionary } from "./en";
+
+const tr: Dictionary = {
+  strings: {
+    "stage.audio": "Ses",
+    "stage.recognition": "Tanıma",
+    "stage.translation": "Çeviri",
+    "stage.notCapturing": "Kayıt yok",
+    "stage.notRunning": "Çalışmıyor",
+    "meter.level": "Giriş seviyesi",
+    "action.start": "Dinlemeye başla",
+    "action.stop": "Durdur",
+    "action.working": "Başlatılıyor…",
+    "action.history": "Geçmiş",
+    "action.settings": "Ayarlar",
+    "action.clear": "Temizle",
+    "action.dismiss": "Gizle",
+    "action.refresh": "Yenile",
+    "action.delete": "Sil",
+    "action.play": "Çal",
+    "action.text": "Metin",
+    "action.hideText": "Metni gizle",
+    "action.install": "Kur",
+    "action.remove": "Kaldır",
+    "action.cancel": "Vazgeç",
+    "action.github": "Projenin GitHub sayfası",
+
+    "transcript.original": "Özgün metin",
+    "transcript.translation": "Çeviri",
+    "transcript.into": "Çeviri dili:",
+    "transcript.toLanguage": "→",
+    "transcript.emptySource":
+      "«Dinlemeye başla»ya basın ve konuşma içeren bir şey çalın - ya da ayarlardaki örnek kliplerden birini. Söylenenler burada belirir.",
+    "transcript.emptyTarget":
+      "Çeviri burada belirir; konuşan kişi hâlâ konuşurken, parça parça.",
+    "transcript.translating": "çevriliyor…",
+    "transcript.notTranslated": "- çevrilmedi",
+    "transcript.toBottom": "En son satırı izle",
+
+    "settings.general": "Genel",
+    "settings.models": "Modeller",
+    "settings.about": "Hakkında",
+    "settings.audioTitle": "Ses",
+    "settings.audioNote":
+      "Sesin nereden geldiği. Ya bu Mac'in çaldığı her şey ya da tek bir uygulama.",
+    "settings.audio": "Ses kaynağı",
+    "settings.recognition": "Konuşma tanıma",
+    "settings.recognitionNote":
+      "Bilgisayarda çalanları metne çevirir. Bir tanıma modeli gerekir.",
+    "settings.translation": "Çeviri",
+    "settings.translationNote":
+      "Tanınan metni başka bir dile aktarır. Yukarıdakinden ayrı bir çeviri modeli gerekir.",
+    "settings.on": "Açık",
+    "settings.showOriginal": "Özgün metni çevirinin yanında göster",
+    "settings.locked": "Bunları değiştirmek için dinlemeyi durdurun.",
+    "settings.noModel": "Kurulu model yok",
+    "settings.needVad": "Aşağıdan ses etkinliği modelini kurun - tanıma buna ihtiyaç duyar.",
+    "settings.needAsr": "Aşağıdan bir tanıma modeli kurun.",
+    "settings.needMt": "Aşağıdan bir çeviri modeli kurun.",
+    "settings.detect": "Otomatik algıla",
+    "settings.model": "Model",
+    "settings.interface": "Arayüz",
+    "settings.interfaceNote":
+      "Pencerenin görünüşü. Bunların hiçbiri uygulamanın sesle ne yaptığını değiştirmez.",
+    "settings.language": "Dil",
+    "settings.theme": "Tema",
+    "settings.textSize": "Yazı boyutu",
+    "settings.samples": "Video aramadan deneyin",
+    "settings.samplesNote":
+      "Kayıtlı bir klibi hoparlörden çalar, böylece diğer her sesle aynı yoldan geçer. Önce dinlemeyi başlatın.",
+
+    "theme.dark": "Koyu",
+    "theme.light": "Açık",
+    "theme.system": "Sistemle aynı",
+
+    "about.title": "Hakkında",
+    "about.tagline":
+      "Bu bilgisayarda çalan her şey için canlı altyazı ve çeviri. Tanıma da çeviri de burada çalışır - hesap yok, API anahtarı yok ve hiçbir şey bu makineden çıkmaz.",
+    "about.version": "Sürüm",
+    "about.runtime": "Çalışma ortamı",
+    "about.license": "Lisans",
+    "about.source": "Kaynak kodu",
+    "about.issues": "Sorun bildir",
+    "about.licenseFile": "Lisansı oku",
+    "about.notices": "Üçüncü taraf lisansları",
+    "about.built": "Şunlarla yapıldı",
+    "about.how": "Nasıl çalışır",
+    "about.howCapture":
+      "Ses doğrudan macOS'tan, bir Core Audio süreç dinlemesiyle alınır: Mac'inizin zaten çaldığı sesin ta kendisi - hepsi birden ya da tek bir uygulama. Sanal ses sürücüsü yok, mikrofon yok ve duyduğunuz şeyde hiçbir şey değişmiyor.",
+    "about.howPipeline":
+      "Bu akış 16 kHz'de tek kanala indirilir ve bellekte kalır. Silero VAD onu cümlelere böler, whisper.cpp bunları GPU üzerinde metne çevirir, llama.cpp ise konuşan kişi hâlâ konuşurken ayrı bir süreçte çeviriyi yapar. Sesin kendisi hiçbir zaman diske yazılmaz ve bu Mac'ten çıkmaz.",
+
+    "models.title": "Modeller",
+    "models.note":
+      "Her şey bu makinede çalışır, yani her model bu diskteki bir dosyadır. Biri tanıma, biri çeviri için olmak üzere iki model kurun.",
+    "models.onDisk": "diskte",
+    "models.forRecognition": "tanıma",
+    "models.forTranslation": "çeviri",
+    "models.forVad": "ses algılama",
+    "models.recommended": "önerilen",
+    "models.required": "gerekli",
+    "models.installed": "kurulu",
+    "models.of": "/",
+
+    "history.empty":
+      "Henüz oturum yok. Dinlemeye her başladığınızda, tanınan ve çevrilen her şey buraya yazılır.",
+    "history.pick": "Soldan bir oturum seçin.",
+    "history.loading": "Yükleniyor…",
+    "history.rows": "satır",
+    "history.words": "sözcük",
+    "history.exportText": "Metni dışa aktar",
+    "history.exportSrt": "Altyazıyı dışa aktar",
+    "history.exportJson": "JSON olarak aktar",
+    "history.saved": "Şuraya kaydedildi:",
+    "history.noModel": "tanıma modeli yok",
+    "history.notTranslated": "çevrilmedi",
+    "history.segment": "parça",
+    "history.segments": "parça",
+
+    "size.small": "Küçük",
+    "size.medium": "Orta",
+    "size.large": "Büyük",
+    "size.huge": "Çok büyük",
+  },
+  phrases: {
+    idle: [
+      "Merhaba. Bir şeyler çevirelim mi?",
+      "İçinde konuşma olan herhangi bir şey açın",
+      "Siz hazır olunca ben hazırım",
+      "Ortalık sessiz. Yine de dinliyorum",
+      "Tek bir tıkla sözcükler gelmeye başlar",
+      "Açtığınız hiçbir şey bu Mac'ten çıkmaz",
+      "Bugün ne izliyoruz?",
+      "Podcast, ders, görüşme - benim için hepsi aynı",
+      "İlk cümleyi bekliyorum",
+      "Dinlemeyi başlatın, yola çıkalım",
+    ],
+    live: [
+      "Dikkatle dinliyorum…",
+      "Sözcükleri seçmeye çalışıyorum…",
+      "Cümleleri havada yakalıyorum…",
+      "Bu kesinlikle bir sözcüktü…",
+      "Sözlüğümü karıştırıyorum…",
+      "Yetişiyorum, aşağı yukarı…",
+      "Düşündüğümden hızlı çeviriyorum…",
+      "Kulak kesildim, dikkatim dağılmıyor…",
+      "Şu cümleyi neredeyse yakaladım…",
+      "Takipteyim…",
+    ],
+  },
+};
+
+export default tr;
