@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#plataformas)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 [English](../../README.md) ·
 [Русский](README.ru.md) ·
@@ -44,8 +44,9 @@ disco nem enviado para lado nenhum.
   fala, em vez de serem reescritas debaixo de quem lê
 - **Traduz enquanto se fala** - as palavras vão para o tradutor assim que ficam
   fixas, não no fim da frase, e a tradução chega palavra a palavra
-- **Gere os modelos** a partir da própria aplicação: sete de reconhecimento e
-  cinco de tradução, descarregados com progresso e verificação SHA-256
+- **Gere os modelos** a partir da própria aplicação: seis de reconhecimento e
+  três de tradução, todos MIT ou Apache-2.0, descarregados com progresso e
+  verificação SHA-256
 - **Grava cada sessão** - podem ser consultadas depois e exportadas como texto,
   legendas (`.srt`) ou JSON com os tempos correspondentes
 - **Traz clipes de exemplo**, para experimentar sem ter de procurar um vídeo
@@ -103,7 +104,7 @@ plataforma: a captura usa as APIs nativas do sistema.
 |---|---|
 | macOS | 14.4 ou mais recente, Apple Silicon ou Intel |
 | Memória | 8 GB só para o reconhecimento, 16 GB com tradução |
-| Disco | 0,5-4,5 GB para os modelos escolhidos |
+| Disco | 0,1-6,5 GB para os modelos escolhidos |
 | Para compilar | [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 20+, cmake (`brew install cmake`) |
 
 ## Instalação
@@ -170,6 +171,19 @@ Duas coisas a saber sobre uma cópia compilada por si:
 - **Não mova a aplicação enquanto está a correr.** Para a atualizar, volte a
   executar `npm run install:macos`; substitui `/Applications/Marswind.app` no
   lugar.
+
+### Atualizar
+
+**Definições → Acerca → Procurar atualizações.** A aplicação pergunta ao GitHub
+se existe uma versão mais recente; se existir, transfere a imagem para
+Transferências, compara-a com a soma de verificação publicada ao lado e mostra-a
+no Finder. Instalar é o mesmo arrastar da primeira vez.
+
+Nada é verificado sozinho: sem temporizador e sem verificação ao arrancar, porque
+a aplicação não faz pedidos de rede que não tenha carregado num botão.
+
+Uma cópia compilada por si atualiza-se como foi instalada: `npm run
+install:macos` outra vez.
 
 ### Criar uma imagem de disco
 
@@ -244,8 +258,8 @@ e leia as transcrições, não apenas as pontuações.
 
 - O áudio é capturado, reamostrado e reconhecido **em memória**. Nunca é escrito
   em disco nem enviado para lado nenhum.
-- O único tráfego de rede é a transferência dos modelos que pedir. Depois de
-  instalados, a aplicação não gera nenhum.
+- O único tráfego de rede é aquilo para que carrega num botão: transferir um
+  modelo ou procurar atualizações. Nada acontece por temporizador nem ao arrancar.
 - Sem telemetria, sem analítica, sem relatórios de falhas, sem conta.
 - As transcrições são escritas apenas na pasta de dados da aplicação, para que a
   vista de Histórico tenha algo para mostrar. Apagam-se dentro da aplicação.
@@ -281,12 +295,11 @@ Toda a árvore de dependências, com a licença de cada pacote, está em
 lockfiles e distribuída dentro do app ao lado da própria licença.
 
 **Nada disso cobre os modelos.** Eles são baixados do
-[Hugging Face](https://huggingface.co) a seu pedido e mantêm os termos de quem
-os publica: os modelos whisper e Silero são MIT, o Qwen3 é Apache-2.0, e o Gemma
-3 está sob os [termos do próprio Google](https://ai.google.dev/gemma/terms), que
-não são uma licença de código aberto e impõem condições sobre o uso da saída.
-Cada linha nos ajustes indica sua licença antes de o download começar. Os
-detalhes estão em [docs/MODELS.md](../MODELS.md).
+[Hugging Face](https://huggingface.co) a seu pedido e mantêm os termos de quem os
+publica - e no catálogo só entram aqueles cujos termos se aceitam sem ler: os
+modelos whisper e Silero são MIT, o Qwen3 é Apache-2.0. Cada linha nos ajustes
+indica sua licença antes de o download começar. Os detalhes estão em
+[docs/MODELS.md](../MODELS.md).
 
 ## Licença
 

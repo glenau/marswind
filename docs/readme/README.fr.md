@@ -9,7 +9,7 @@ Entièrement hors ligne.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#plateformes)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 [English](../../README.md) ·
 [Русский](README.ru.md) ·
@@ -45,8 +45,9 @@ une fois puis s'exécutent localement ; l'audio reste en mémoire, n'est jamais
   s'allongent à mesure qu'on parle, au lieu d'être réécrits sous le lecteur
 - **Traduit pendant qu'on parle** - les mots partent au traducteur dès qu'ils sont
   figés, pas une fois la phrase terminée, et la traduction arrive mot à mot
-- **Gère les modèles** depuis l'application : sept modèles de reconnaissance et
-  cinq de traduction, téléchargés avec progression et vérification SHA-256
+- **Gère les modèles** depuis l'application : six modèles de reconnaissance et
+  trois de traduction, tous sous MIT ou Apache-2.0, téléchargés avec
+  progression et vérification SHA-256
 - **Enregistre chaque session** - consultables ensuite et exportables en texte,
   sous-titres (`.srt`) ou JSON avec les temps correspondants
 - **Fournit des extraits d'exemple**, pour l'essayer sans partir chercher une vidéo
@@ -105,7 +106,7 @@ plateforme : la capture passe par les API natives du système.
 |---|---|
 | macOS | 14.4 ou plus récent, Apple Silicon ou Intel |
 | Mémoire | 8 Go pour la reconnaissance seule, 16 Go avec la traduction |
-| Disque | 0,5-4,5 Go pour les modèles choisis |
+| Disque | 0,1-6,5 Go pour les modèles choisis |
 | Pour compiler | [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 20+, cmake (`brew install cmake`) |
 
 ## Installation
@@ -177,6 +178,19 @@ Deux choses à savoir sur une copie compilée soi-même :
 - **Ne déplacez pas l'application pendant son exécution.** Pour la mettre à jour,
   relancez `npm run install:macos` ; il remplace `/Applications/Marswind.app` sur
   place.
+
+### Mettre à jour
+
+**Réglages → À propos → Rechercher des mises à jour.** L'application demande à
+GitHub s'il existe une version plus récente ; si oui, elle télécharge l'image
+dans Téléchargements, la compare à la somme de contrôle publiée à côté et
+l'affiche dans le Finder. L'installer, c'est le même glisser que la première fois.
+
+Rien ne se vérifie tout seul : pas de minuterie, pas de contrôle au lancement,
+car l'application ne fait aucune requête réseau que vous n'avez pas déclenchée.
+
+Une copie que vous avez compilée se met à jour comme elle a été installée :
+`npm run install:macos` à nouveau.
 
 ### Créer une image disque
 
@@ -252,8 +266,8 @@ plusieurs exécutions et lisez les transcriptions, pas seulement les scores.
 
 - L'audio est capturé, rééchantillonné et reconnu **en mémoire**. Il n'est jamais
   écrit sur disque ni envoyé où que ce soit.
-- Le seul trafic réseau est le téléchargement des modèles que vous demandez. Une
-  fois installés, l'application n'en génère aucun.
+- Le seul trafic réseau est celui que vous déclenchez : télécharger un modèle ou
+  rechercher une mise à jour. Rien ne part sur minuterie ni au lancement.
 - Pas de télémétrie, pas d'analytique, pas de rapports de plantage, pas de compte.
 - Les transcriptions sont écrites uniquement dans le dossier de données de
   l'application, pour que l'historique ait quelque chose à montrer. Elles se
@@ -291,12 +305,11 @@ lockfiles et embarqué dans l'application à côté de la licence elle-même.
 
 **Rien de tout cela ne couvre les modèles.** Ils sont téléchargés depuis
 [Hugging Face](https://huggingface.co) à votre demande et conservent les
-conditions de ceux qui les publient: les modèles whisper et Silero sont sous
-MIT, Qwen3 sous Apache-2.0, et Gemma 3 sous
-[les conditions propres à Google](https://ai.google.dev/gemma/terms), qui ne
-sont pas une licence open source et posent des conditions sur l'usage de la
-sortie. Chaque ligne des réglages nomme sa licence avant que le téléchargement
-ne commence. Le détail est dans [docs/MODELS.md](../MODELS.md).
+conditions de ceux qui les publient - et seuls ceux dont les conditions
+s'acceptent sans les lire entrent au catalogue : les modèles whisper et Silero
+sont sous MIT, Qwen3 sous Apache-2.0. Chaque ligne des réglages nomme sa licence
+avant que le téléchargement ne commence. Le détail est dans
+[docs/MODELS.md](../MODELS.md).
 
 ## Licence
 

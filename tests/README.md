@@ -43,7 +43,7 @@ that scales wrongly, or a tap that drops buffers all show up here immediately.
 tests/run-asr.sh                      # every clip, three runs each
 tests/run-asr.sh --runs 5             # more runs, tighter median
 tests/run-asr.sh news-bulletin        # one clip
-tests/run-asr.sh --model small.en     # a different model
+tests/run-asr.sh --model small        # a different model
 ```
 
 Each clip is played, transcribed, and scored against its reference with word

@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#지원-플랫폼)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 [English](../../README.md) ·
 [Русский](README.ru.md) ·
@@ -42,8 +42,8 @@ API 키도, 계정도, 인터넷도 필요 없습니다. 모델은 한 번만 �
   고쳐 쓰이는 대신 말이 이어지는 대로 늘어납니다
 - **말하는 도중에 번역**합니다. 단어는 문장이 끝나기를 기다리지 않고 확정되는 즉시
   번역기로 넘어가며, 번역문도 한 단어씩 도착합니다
-- **모델을 앱 안에서 관리**합니다. 인식 모델 7종과 번역 모델 5종을 진행률 표시와
-  SHA-256 검증과 함께 내려받습니다
+- **모델을 앱 안에서 관리**합니다. 인식 모델 6종과 번역 모델 3종을 진행률 표시와
+  SHA-256 검증과 함께 내려받으며, 모두 MIT 또는 Apache-2.0입니다
 - **모든 세션을 기록**합니다. 나중에 살펴볼 수 있고 텍스트, 자막(`.srt`), 또는 타이밍
   정보가 담긴 JSON으로 내보낼 수 있습니다
 - **예제 음성 클립을 포함**하고 있어 영상을 찾지 않고도 시험해 볼 수 있습니다
@@ -98,7 +98,7 @@ BlackHole 같은 가상 오디오 드라이버는 **어느 플랫폼에서도 �
 |---|---|
 | macOS | 14.4 이상, Apple Silicon 또는 Intel |
 | 메모리 | 인식만 8 GB, 번역까지 16 GB |
-| 디스크 | 선택한 모델에 따라 0.5-4.5 GB |
+| 디스크 | 선택한 모델에 따라 0.1-6.5 GB |
 | 빌드에 필요 | [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 20+, cmake (`brew install cmake`) |
 
 ## 설치
@@ -159,6 +159,18 @@ npm run install:macos
   Developer ID 인증서이며 아직 없습니다.
 - **실행 중에는 앱을 옮기지 마세요.** 업데이트하려면 `npm run install:macos`를 다시
   실행하면 됩니다. `/Applications/Marswind.app`을 제자리에서 교체합니다.
+
+### 업데이트
+
+**설정 → 정보 → 업데이트 확인.** 더 새로운 릴리스가 있는지 GitHub에 묻고, 있으면
+이미지를 「다운로드」에 내려받아 옆에 공개된 체크섬과 대조한 뒤 Finder에서 보여 줍니다.
+설치는 처음과 같은 끌어다 놓기입니다.
+
+스스로 확인하는 일은 없습니다. 타이머도, 실행 시 확인도 없습니다. 버튼을 누르지 않은
+네트워크 요청은 하지 않기 때문입니다.
+
+직접 빌드한 복사본은 설치한 방식 그대로 갱신합니다. `npm run install:macos`를 다시
+실행하세요.
 
 ### 디스크 이미지 만들기
 
@@ -229,8 +241,8 @@ tests/run-pipeline.sh
 
 - 오디오는 **메모리에서** 캡처·리샘플링·인식됩니다. 디스크에 기록되거나 어딘가로
   전송되는 일은 없습니다.
-- 유일한 네트워크 트래픽은 사용자가 요청한 모델의 다운로드입니다. 설치가 끝나면 앱은
-  네트워크를 전혀 쓰지 않습니다.
+- 네트워크 트래픽은 버튼을 눌렀을 때만 생깁니다. 모델 내려받기와 업데이트 확인,
+  두 가지뿐이며 타이머나 실행 시 통신은 없습니다.
 - 원격 측정, 분석, 크래시 리포트, 계정 모두 없습니다.
 - 전사 기록은 기록 보기에 보여줄 내용을 위해 앱 데이터 디렉터리에만 저장됩니다. 앱
   안에서 삭제할 수 있습니다.
@@ -265,11 +277,9 @@ tests/run-pipeline.sh
 
 **모델은 여기에 포함되지 않습니다.** 모델은 사용자의 요청에 따라
 [Hugging Face](https://huggingface.co)에서 내려받으며 게시자의 조건을 그대로
-유지합니다. whisper와 Silero 모델은 MIT, Qwen3는 Apache-2.0이고, Gemma 3는
-[구글 자체 약관](https://ai.google.dev/gemma/terms)을 따르는데 이는 오픈소스
-라이선스가 아니며 결과물의 사용에도 조건을 둡니다. 설정의 각 줄은 내려받기가
-시작되기 전에 라이선스를 알려 줍니다. 자세한 내용은
-[docs/MODELS.md](../MODELS.md)에 있습니다.
+유지합니다. 목록에는 읽지 않고 받아들일 수 있는 조건의 모델만 올립니다. whisper와
+Silero 모델은 MIT, Qwen3는 Apache-2.0입니다. 설정의 각 줄은 내려받기가 시작되기
+전에 라이선스를 알려 줍니다. 자세한 내용은 [docs/MODELS.md](../MODELS.md)에 있습니다.
 
 ## 라이선스
 

@@ -4,14 +4,21 @@
 //! Sizes and SHA-256 values come from the Hugging Face LFS metadata of the
 //! source repositories.
 //!
-//! Every entry also carries the license its weights come under. Marswind does
-//! not redistribute any of them - they are fetched on request, from the
-//! repository named in `url` - but it is the thing doing the fetching, and the
-//! terms are not all the same. The whisper and VAD models are MIT and Qwen3 is
-//! Apache-2.0; Gemma 3 is under Google's own terms, which are not an
-//! open-source license and restrict what the output may be used for. Somebody
-//! choosing between two rows in a list deserves to see that before the
-//! download starts rather than after, so it is shown on the row. See
+//! Every entry also carries the license its weights come under, shown on the
+//! row before the download starts. Marswind does not redistribute any of them -
+//! they are fetched on request, from the repository named in `url` - but it is
+//! the thing doing the fetching, and somebody choosing between two rows
+//! deserves to know what they are agreeing to.
+//!
+//! Two rules decide what gets a row, and both are held by tests below.
+//!
+//! **Everything offered is open source**: MIT or Apache-2.0, nothing else. A
+//! model whose terms a user would have to read before pressing Install does not
+//! belong behind an Install button.
+//!
+//! **Nothing is English-only.** whisper's `.en` builds are smaller and more
+//! accurate at their size, and this is an app for watching things in languages
+//! you do not speak; a recognizer that only hears English cannot do that. See
 //! docs/MODELS.md.
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
@@ -25,27 +32,6 @@ pub enum ModelKind {
     Mt,
 }
 
-/// How a translation model wants its conversation laid out. A model handed the
-/// wrong one still answers - with the markers as text, and no idea where its
-/// turn ends - so this travels with the model rather than being guessed.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize)]
-#[serde(rename_all = "lowercase")]
-pub enum PromptFamily {
-    /// ChatML, as used by Qwen.
-    ChatMl,
-    /// Gemma's turn markers, which have no system role at all.
-    Gemma,
-}
-
-impl PromptFamily {
-    pub fn as_str(self) -> &'static str {
-        match self {
-            PromptFamily::ChatMl => "chatml",
-            PromptFamily::Gemma => "gemma",
-        }
-    }
-}
-
 #[derive(Debug, Clone, Copy)]
 pub struct ModelSpec {
     pub id: &'static str,
@@ -57,11 +43,6 @@ pub struct ModelSpec {
     pub file_name: &'static str,
     pub size_bytes: u64,
     pub sha256: &'static str,
-    /// English-only models are smaller and more accurate at their size, but
-    /// cannot transcribe anything else.
-    pub multilingual: bool,
-    /// Only meaningful for translation models.
-    pub prompt: PromptFamily,
     /// What the weights are licensed under, as the user should read it.
     pub license: &'static str,
     /// Where those terms are stated, opened from the row in Settings.
@@ -73,30 +54,27 @@ pub struct ModelSpec {
 //   whisper: https://huggingface.co/ggerganov/whisper.cpp/resolve/main
 //   vad:     https://huggingface.co/ggml-org/whisper-vad/resolve/main
 
-/// The three sets of terms in the catalog, as (name, where they are stated).
-/// Named rather than repeated so a typo cannot put one model under a license it
-/// is not published under.
+/// Both sets of terms in the catalog, as (name, where they are stated). Named
+/// rather than repeated so a typo cannot put one model under a license it is
+/// not published under.
 const MIT: (&str, &str) = ("MIT", "https://opensource.org/license/mit");
 const APACHE_2: (&str, &str) = ("Apache-2.0", "https://www.apache.org/licenses/LICENSE-2.0");
-const GEMMA_TERMS: (&str, &str) = ("Gemma Terms of Use", "https://ai.google.dev/gemma/terms");
 
 pub const VAD_MODEL_ID: &str = "silero-v5.1.2";
 
 pub static CATALOG: &[ModelSpec] = &[
     ModelSpec {
-        id: "tiny.en",
+        id: "tiny",
         kind: ModelKind::Asr,
-        name: "Tiny (English)",
+        name: "Tiny",
         note: "Fastest and roughest. For old hardware or a quick smoke test.",
         url: concat!(
             "https://huggingface.co/ggerganov/whisper.cpp/resolve/main",
-            "/ggml-tiny.en.bin"
+            "/ggml-tiny.bin"
         ),
-        file_name: "ggml-tiny.en.bin",
-        size_bytes: 77_704_715,
-        sha256: "921e4cf8686fdd993dcd081a5da5b6c365bfde1162e72b08d75ac75289920b1f",
-        multilingual: false,
-        prompt: PromptFamily::ChatMl,
+        file_name: "ggml-tiny.bin",
+        size_bytes: 77_691_713,
+        sha256: "be07e048e1e599ad46341c8d2a135645097a538221678b7acdd1b1919c6e1b21",
         license: MIT.0,
         license_url: MIT.1,
     },
@@ -112,25 +90,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "ggml-base.bin",
         size_bytes: 147_951_465,
         sha256: "60ed5bc3dd14eea856493d334349b405782ddcaf0028d4b5df4088345fba2efe",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
-        license: MIT.0,
-        license_url: MIT.1,
-    },
-    ModelSpec {
-        id: "small.en",
-        kind: ModelKind::Asr,
-        name: "Small (English)",
-        note: "Practical quality floor for English audio.",
-        url: concat!(
-            "https://huggingface.co/ggerganov/whisper.cpp/resolve/main",
-            "/ggml-small.en.bin"
-        ),
-        file_name: "ggml-small.en.bin",
-        size_bytes: 487_614_201,
-        sha256: "c6138d6d58ecc8322097e0f987c32f1be8bb0a18532a3f88f734d1bbf9c41e5d",
-        multilingual: false,
-        prompt: PromptFamily::ChatMl,
         license: MIT.0,
         license_url: MIT.1,
     },
@@ -138,7 +97,7 @@ pub static CATALOG: &[ModelSpec] = &[
         id: "small",
         kind: ModelKind::Asr,
         name: "Small",
-        note: "Same size as Small (English) but understands 99 languages.",
+        note: "The practical quality floor. Understands 99 languages.",
         url: concat!(
             "https://huggingface.co/ggerganov/whisper.cpp/resolve/main",
             "/ggml-small.bin"
@@ -146,8 +105,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "ggml-small.bin",
         size_bytes: 487_601_967,
         sha256: "1be3a9b2063867b937e64e2ec7483364a79917e157fa98c5d94b5c1fffea987b",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: MIT.0,
         license_url: MIT.1,
     },
@@ -163,8 +120,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "ggml-large-v3-turbo-q5_0.bin",
         size_bytes: 574_041_195,
         sha256: "394221709cd5ad1f40c46e6031ca61bce88931e6e088c188294c6d5a55ffa7e2",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: MIT.0,
         license_url: MIT.1,
     },
@@ -180,8 +135,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "ggml-medium.bin",
         size_bytes: 1_533_763_059,
         sha256: "6c14d5adee5f86394037b4e4e8b59f1673b6cee10e3cf0b11bbdbee79c156208",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: MIT.0,
         license_url: MIT.1,
     },
@@ -197,8 +150,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "ggml-large-v3-turbo.bin",
         size_bytes: 1_624_555_275,
         sha256: "1fc70f774d38eb169993ac391eea357ef47c88757ef72ee5943879b7e8e2bc69",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: MIT.0,
         license_url: MIT.1,
     },
@@ -214,8 +165,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
         size_bytes: 2_497_281_120,
         sha256: "3605803b982cb64aead44f6c1b2ae36e3acdb41d8e46c8a94c6533bc4c67e597",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: APACHE_2.0,
         license_url: APACHE_2.1,
     },
@@ -231,8 +180,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "Qwen3-1.7B-Q4_K_M.gguf",
         size_bytes: 1_282_439_264,
         sha256: "d2387ca2dbfee2ffabce7120d3770dadca0b293052bc2f0e138fdc940d9bc7b5",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: APACHE_2.0,
         license_url: APACHE_2.1,
     },
@@ -248,45 +195,8 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "Qwen3-8B-Q4_K_M.gguf",
         size_bytes: 5_027_784_512,
         sha256: "120307ba529eb2439d6c430d94104dabd578497bc7bfe7e322b5d9933b449bd4",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: APACHE_2.0,
         license_url: APACHE_2.1,
-    },
-    ModelSpec {
-        id: "gemma3-4b-q4",
-        kind: ModelKind::Mt,
-        name: "Gemma 3 4B (compressed)",
-        note:
-            "A different family from Qwen, and often better on European languages. Wants 4 GB free.",
-        url: concat!(
-            "https://huggingface.co/unsloth/gemma-3-4b-it-GGUF/resolve/main",
-            "/gemma-3-4b-it-Q4_K_M.gguf"
-        ),
-        file_name: "gemma-3-4b-it-Q4_K_M.gguf",
-        size_bytes: 2_489_894_016,
-        sha256: "04a43a22e8d2003deda5acc262f68ec1005fa76c735a9962a8c77042a74a7d19",
-        multilingual: true,
-        prompt: PromptFamily::Gemma,
-        license: GEMMA_TERMS.0,
-        license_url: GEMMA_TERMS.1,
-    },
-    ModelSpec {
-        id: "gemma3-12b-q4",
-        kind: ModelKind::Mt,
-        name: "Gemma 3 12B (compressed)",
-        note: "The best translation here, and the heaviest. Wants 12 GB free.",
-        url: concat!(
-            "https://huggingface.co/unsloth/gemma-3-12b-it-GGUF/resolve/main",
-            "/gemma-3-12b-it-Q4_K_M.gguf"
-        ),
-        file_name: "gemma-3-12b-it-Q4_K_M.gguf",
-        size_bytes: 7_300_778_336,
-        sha256: "15b8fd9d8672cd4240c178c217ca781409291f34e353d2e913b29c7602ceb3ff",
-        multilingual: true,
-        prompt: PromptFamily::Gemma,
-        license: GEMMA_TERMS.0,
-        license_url: GEMMA_TERMS.1,
     },
     ModelSpec {
         id: VAD_MODEL_ID,
@@ -300,8 +210,6 @@ pub static CATALOG: &[ModelSpec] = &[
         file_name: "ggml-silero-v5.1.2.bin",
         size_bytes: 885_098,
         sha256: "29940d98d42b91fbd05ce489f3ecf7c72f0a42f027e4875919a28fb4c04ea2cf",
-        multilingual: true,
-        prompt: PromptFamily::ChatMl,
         license: MIT.0,
         license_url: MIT.1,
     },
@@ -374,22 +282,12 @@ mod tests {
     }
 
     /// The catalog is where the app tells a user what they are agreeing to, so
-    /// a row without terms behind it is worse than no row at all - and a
-    /// Gemma model quietly carrying "MIT" would be a false statement about
-    /// somebody else's licence.
+    /// a row carrying the wrong terms is a false statement about somebody
+    /// else's license, made on their behalf.
     #[test]
     fn every_entry_states_its_terms() {
         for spec in CATALOG {
-            assert!(!spec.license.is_empty(), "{} has no license", spec.id);
-            assert!(
-                spec.license_url.starts_with("https://"),
-                "{} has no link to its terms",
-                spec.id
-            );
-
-            let expected = if spec.url.contains("/gemma-3-") {
-                GEMMA_TERMS
-            } else if spec.url.contains("/Qwen3-") {
+            let expected = if spec.url.contains("/Qwen3-") {
                 APACHE_2
             } else {
                 MIT
@@ -398,6 +296,42 @@ mod tests {
                 (spec.license, spec.license_url),
                 expected,
                 "{} is published under different terms from the ones listed",
+                spec.id
+            );
+        }
+    }
+
+    /// Anything a user can install through this app is under a license they can
+    /// take at face value: MIT or Apache-2.0 and nothing else. A model whose
+    /// terms reach as far as what the output may be used for fails here rather
+    /// than in somebody's issue.
+    #[test]
+    fn nothing_offered_is_outside_an_open_source_license() {
+        for spec in CATALOG {
+            assert!(
+                [MIT, APACHE_2].contains(&(spec.license, spec.license_url)),
+                "{} is offered under '{}', which is not on the open-source list",
+                spec.id,
+                spec.license
+            );
+            assert!(
+                spec.license_url.starts_with("https://"),
+                "{} has no link to its terms",
+                spec.id
+            );
+        }
+    }
+
+    /// Recognition that only hears English is no use to somebody watching a
+    /// film in a language they do not speak, which is the whole app. The
+    /// `.en` builds are smaller and better at their size, and they are still
+    /// not offered.
+    #[test]
+    fn no_english_only_models_are_offered() {
+        for spec in CATALOG {
+            assert!(
+                !spec.file_name.contains(".en."),
+                "{} is an English-only build",
                 spec.id
             );
         }

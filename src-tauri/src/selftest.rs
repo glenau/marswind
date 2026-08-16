@@ -303,9 +303,6 @@ fn transcribe(app: &AppHandle, seconds: f32, with_translation: bool) -> Result<(
                 TranslateConfig {
                     engine: Engine::Llm,
                     model_path: mt_model_path,
-                    prompt: catalog::find(&mt_model_id)
-                        .map(|spec| spec.prompt.as_str())
-                        .unwrap_or("chatml"),
                     model_id: mt_model_id,
                     target,
                 },
@@ -451,9 +448,6 @@ fn quit_while_running(app: &AppHandle, seconds: f32) -> Result<(), String> {
                 TranslateConfig {
                     engine: Engine::Llm,
                     model_path: mt_model_path,
-                    prompt: catalog::find(&mt_model_id)
-                        .map(|spec| spec.prompt.as_str())
-                        .unwrap_or("chatml"),
                     model_id: mt_model_id,
                     target,
                 },

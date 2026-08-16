@@ -6,6 +6,7 @@ pub mod models;
 pub mod samples;
 mod selftest;
 pub mod translate;
+pub mod update;
 
 use std::sync::Arc;
 
@@ -55,6 +56,8 @@ pub fn run() {
             commands::play_sample,
             commands::stop_sample,
             commands::playing_sample,
+            commands::check_for_update,
+            commands::download_update,
         ])
         .setup(|app| {
             // Without this the window can open behind whatever the user is

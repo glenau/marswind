@@ -9,7 +9,7 @@ offline.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#piattaforme)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 [English](../../README.md) ·
 [Русский](README.ru.md) ·
@@ -45,8 +45,9 @@ scritto su disco né inviato da nessuna parte.
   mentre si parla, invece di essere riscritti sotto chi legge
 - **Traduce mentre si parla** - le parole vanno al traduttore appena sono fissate,
   non a fine frase, e la traduzione arriva parola per parola
-- **Gestisce i modelli** dall'app stessa: sette di riconoscimento e cinque di
-  traduzione, scaricati con avanzamento e verifica SHA-256
+- **Gestisce i modelli** dall'app stessa: sei di riconoscimento e tre di
+  traduzione, tutti MIT o Apache-2.0, scaricati con avanzamento e verifica
+  SHA-256
 - **Registra ogni sessione** - consultabili in seguito ed esportabili come testo,
   sottotitoli (`.srt`) o JSON con i tempi corrispondenti
 - **Include clip di esempio**, per provarlo senza andare a cercare un video
@@ -104,7 +105,7 @@ cattura passa dalle API native del sistema.
 |---|---|
 | macOS | 14.4 o successivo, Apple Silicon o Intel |
 | Memoria | 8 GB per il solo riconoscimento, 16 GB con la traduzione |
-| Disco | 0,5-4,5 GB per i modelli scelti |
+| Disco | 0,1-6,5 GB per i modelli scelti |
 | Per compilare | [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 20+, cmake (`brew install cmake`) |
 
 ## Installazione
@@ -171,6 +172,19 @@ Due cose da sapere su una copia compilata da te:
   non ce n'è ancora uno.
 - **Non spostare l'app mentre è in esecuzione.** Per aggiornarla, riesegui
   `npm run install:macos`; sostituisce `/Applications/Marswind.app` sul posto.
+
+### Aggiornare
+
+**Impostazioni → Informazioni → Cerca aggiornamenti.** L'app chiede a GitHub se
+esiste una versione più recente; se c'è, scarica l'immagine in Download, la
+confronta con il checksum pubblicato accanto e la mostra nel Finder. Installarla
+è lo stesso trascinamento della prima volta.
+
+Niente si controlla da solo: nessun timer e nessun controllo all'avvio, perché
+l'app non fa richieste di rete che non hai premuto.
+
+Una copia compilata da te si aggiorna come è stata installata: di nuovo
+`npm run install:macos`.
 
 ### Creare un'immagine disco
 
@@ -246,8 +260,8 @@ più esecuzioni e leggi le trascrizioni, non solo i punteggi.
 
 - L'audio viene catturato, ricampionato e riconosciuto **in memoria**. Non viene
   mai scritto su disco né inviato da nessuna parte.
-- L'unico traffico di rete è il download dei modelli che richiedi. Una volta
-  installati, l'app non ne genera alcuno.
+- L'unico traffico di rete è quello per cui premi un pulsante: scaricare un
+  modello o cercare aggiornamenti. Niente parte a timer o all'avvio.
 - Nessuna telemetria, nessuna analitica, nessun report di crash, nessun account.
 - Le trascrizioni vengono scritte solo nella cartella dati dell'app, perché la
   vista Cronologia abbia qualcosa da mostrare. Si cancellano dall'app stessa.
@@ -283,12 +297,11 @@ L'intero albero delle dipendenze, con la licenza di ogni pacchetto, è in
 incluso dentro l'app accanto alla licenza stessa.
 
 **Niente di tutto questo copre i modelli.** Vengono scaricati da
-[Hugging Face](https://huggingface.co) su tua richiesta e mantengono i termini
-di chi li pubblica: i modelli whisper e Silero sono MIT, Qwen3 è Apache-2.0, e
-Gemma 3 è sotto i [termini di Google](https://ai.google.dev/gemma/terms), che
-non sono una licenza open source e pongono condizioni su cosa si può fare con
-l'output. Ogni riga nelle impostazioni indica la propria licenza prima che il
-download cominci. I dettagli sono in [docs/MODELS.md](../MODELS.md).
+[Hugging Face](https://huggingface.co) su tua richiesta e mantengono i termini di
+chi li pubblica - e nel catalogo entrano solo quelli i cui termini si accettano
+senza leggerli: i modelli whisper e Silero sono MIT, Qwen3 è Apache-2.0. Ogni
+riga nelle impostazioni indica la propria licenza prima che il download cominci.
+I dettagli sono in [docs/MODELS.md](../MODELS.md).
 
 ## Licenza
 

@@ -61,9 +61,18 @@ hdiutil create \
 	"$DMG"
 rm -rf "$STAGE"
 
+# The digest the in-app updater checks the download against. It has to be a
+# release asset of its own: GitHub publishes no checksum for an attachment, and
+# the updater refuses a release that does not carry one rather than trusting
+# whatever arrived. `shasum -c` reads this format directly, so a person can run
+# the same check by hand.
+echo "==> Writing $DMG.sha256"
+(cd "$(dirname "$DMG")" && shasum -a 256 "$(basename "$DMG")" >"$(basename "$DMG").sha256")
+
 echo
 echo "Built: $DMG"
 ls -lh "$DMG" | awk '{print "       " $5}'
+awk '{print "       sha256 " $1}' "$DMG.sha256"
 echo
 echo "It is ad-hoc signed and NOT notarized. On another Mac, macOS will refuse to"
 echo "open it on the first try - the way through is System Settings → Privacy &"

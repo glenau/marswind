@@ -2354,7 +2354,7 @@ dependencies = [
 
 [[package]]
 name = "marswind"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "block2",
  "crossbeam-channel",

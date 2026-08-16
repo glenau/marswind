@@ -14,6 +14,7 @@ use crate::translate::language::{self, Language};
 use crate::translate::{
     Engine, TranslateConfig, TranslateError, TranslateState, TranslationEngine,
 };
+use crate::update::{self, UpdateError, UpdateInfo};
 
 #[tauri::command]
 pub fn list_audio_sources(engine: State<'_, AudioEngine>) -> Result<Vec<SourceInfo>, AudioError> {
@@ -160,9 +161,6 @@ pub fn start_translation(
     let model_path = store
         .installed_path(&model_id)
         .map_err(|e| TranslateError::Other(e.to_string()))?;
-    let prompt = catalog::find(&model_id)
-        .map(|spec| spec.prompt.as_str())
-        .ok_or_else(|| TranslateError::Other(format!("unknown model '{model_id}'")))?;
 
     translation.start(
         app,
@@ -171,7 +169,6 @@ pub fn start_translation(
             engine: Engine::Llm,
             model_path,
             model_id,
-            prompt,
             target,
         },
     )
@@ -253,6 +250,24 @@ pub fn export_session(
         .join(format!("{id}.{}", format.extension()));
     let written = store.export(&id, format, &to)?;
     Ok(written.display().to_string())
+}
+
+// ----------------------------------------------------------------- updates
+
+/// Asks GitHub whether there is a newer release. This is the app's only network
+/// request that is not a model download, and it is made on a button press and
+/// nowhere else - see `update.rs`.
+#[tauri::command]
+pub async fn check_for_update(app: AppHandle) -> Result<Option<UpdateInfo>, UpdateError> {
+    update::check(&app.package_info().version.to_string()).await
+}
+
+/// Downloads the disk image into Downloads and returns it, checksum verified.
+/// Installing it is the user's two drags; see `update.rs` for why.
+#[tauri::command]
+pub async fn download_update(app: AppHandle, info: UpdateInfo) -> Result<String, UpdateError> {
+    let path = update::download(app, info).await?;
+    Ok(path.to_string_lossy().to_string())
 }
 
 // ----------------------------------------------------------------- samples

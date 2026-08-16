@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#平台支持)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 [English](../../README.md) ·
 [Русский](README.ru.md) ·
@@ -41,7 +41,8 @@ Marswind 会监听电脑正在播放的一切声音-YouTube 视频、Google Meet
 - **识别语音**，在 GPU 上通过 whisper.cpp 运行：字幕随着话音逐步增长，而不会在读者
   眼皮底下被改写
 - **边说边翻译**-词语一旦被确定就送去翻译，而不是等整句结束，译文也逐词返回
-- **在应用内管理模型**：七个识别模型和五个翻译模型，下载时显示进度并做 SHA-256 校验
+- **在应用内管理模型**：六个识别模型和三个翻译模型，全部为 MIT 或 Apache-2.0，下载时
+  显示进度并做 SHA-256 校验
 - **记录每一次会话**-可以回看，并导出为文本、字幕（`.srt`）或带时间信息的 JSON
 - **附带示例音频**，无需另找视频即可试用
 - **支持十三种界面语言**-与可翻译的语言相同-提供浅色与深色主题，字号设置会缩放
@@ -91,7 +92,7 @@ whisper.cpp 与 llama.cpp 无法共享同一个进程。设计与取舍记录在
 |---|---|
 | macOS | 14.4 或更高，Apple Silicon 或 Intel |
 | 内存 | 仅识别需 8 GB，加上翻译需 16 GB |
-| 磁盘 | 所选模型占 0.5-4.5 GB |
+| 磁盘 | 所选模型占 0.1-6.5 GB |
 | 构建所需 | [Rust](https://rustup.rs)、[Node.js](https://nodejs.org) 20+、cmake（`brew install cmake`） |
 
 ## 安装
@@ -148,6 +149,16 @@ npm run install:macos
   没有。
 - **运行期间不要移动应用。** 更新时重新运行 `npm run install:macos`，它会原地替换
   `/Applications/Marswind.app`。
+
+### 更新
+
+**设置 → 关于 → 检查更新。** 应用会向 GitHub 询问是否有更新的版本；如果有，就把镜像
+下载到「下载」，用旁边发布的校验和核对，然后在访达中显示。安装还是第一次那样拖一下。
+
+没有任何东西会自己去检查：没有定时器，启动时也不检查，应用不会发出你没有按过按钮的
+网络请求。
+
+自己构建的副本按原样更新：再执行一次 `npm run install:macos`。
 
 ### 制作磁盘映像
 
@@ -213,7 +224,7 @@ tests/run-pipeline.sh
 ## 隐私
 
 - 音频在**内存中**捕获、重采样和识别。它从不写入磁盘，也不会发送到任何地方。
-- 唯一的网络流量是下载你主动要求的模型。安装完成后应用完全不联网。
+- 唯一的网络流量是你按下按钮才发生的：下载模型，或检查更新。没有定时任务，启动时也不联网。
 - 没有遥测、没有分析、没有崩溃上报、没有账号。
 - 转录内容只写入应用数据目录，以便「历史」视图有内容可显示。可以在应用内删除。
 
@@ -246,10 +257,9 @@ tests/run-pipeline.sh
 与许可证本身一起打包进应用。
 
 **这些都不涵盖模型。** 模型是按你的要求从 [Hugging Face](https://huggingface.co)
-下载的，各自保留发布者的条款：whisper 与 Silero 模型是 MIT，Qwen3 是 Apache-2.0，
-而 Gemma 3 采用[谷歌自己的条款](https://ai.google.dev/gemma/terms)-那不是开源许可
-证，并且对输出的用途设有限制。设置里的每一行都会在下载开始前写明其许可证。详情见
-[docs/MODELS.md](../MODELS.md)。
+下载的，各自保留发布者的条款，而进入目录的只有那些条款可以不读就接受的：whisper 与
+Silero 模型是 MIT，Qwen3 是 Apache-2.0。设置里的每一行都会在下载开始前写明其许可证。
+详情见 [docs/MODELS.md](../MODELS.md)。
 
 ## 许可证
 

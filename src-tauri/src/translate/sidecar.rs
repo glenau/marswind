@@ -66,7 +66,7 @@ pub struct SidecarTranslator {
 }
 
 impl SidecarTranslator {
-    pub fn spawn(model: &Path, threads: i32, template: &str) -> Result<Self, TranslateError> {
+    pub fn spawn(model: &Path, threads: i32) -> Result<Self, TranslateError> {
         let binary = locate_binary()?;
         log::info!("starting the translation worker at {}", binary.display());
 
@@ -75,8 +75,6 @@ impl SidecarTranslator {
             .arg(model)
             .arg("--threads")
             .arg(threads.to_string())
-            .arg("--template")
-            .arg(template)
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
