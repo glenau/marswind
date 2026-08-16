@@ -205,6 +205,7 @@ npm run dev:macos
 | `npm run build:dmg` | ein signiertes `.dmg` zum Weitergeben |
 | `npm run build:sidecar` | nur den Übersetzungs-Worker |
 | `npm run build:icons` | das App-Icon aus `scripts/make-icon.py` neu zeichnen |
+| `npm run build:social` | die Vorschaukarte neu zeichnen, die GitHub bei einem Link zeigt |
 | `npm run licenses` | `THIRD-PARTY-NOTICES.md` aus den Lockfiles neu erzeugen |
 
 Es gibt keine CI: whisper.cpp und llama.cpp werden aus dem Quelltext kompiliert

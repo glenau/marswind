@@ -21,6 +21,13 @@ vite.config.ts.timestamp-*
 # The icon set it feeds - src-tauri/icons/ - is committed; this step is not.
 /assets/icon.png
 
+# the social preview's intermediate, produced by scripts/make-social-preview.py.
+# The other way round from the icon above: here the SVG is the throwaway - most
+# of its 135 KB is the app icon inlined as base64, which is nothing anyone can
+# read or argue with - and the PNG is the artifact, because uploading it is a
+# manual step GitHub has no API for.
+/assets/social-preview.svg
+
 # editor and assistant scratch. .vscode/ is committed because it is two files
 # that point at the right extensions; everything below is one person's setup.
 /.claude/

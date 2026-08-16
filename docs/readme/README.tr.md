@@ -198,6 +198,7 @@ npm run dev:macos
 | `npm run build:dmg` | başkasına verilecek imzalı bir `.dmg` |
 | `npm run build:sidecar` | yalnızca çeviri işçisi |
 | `npm run build:icons` | simgeyi `scripts/make-icon.py` üzerinden yeniden çiz |
+| `npm run build:social` | GitHub'ın bağlantıda gösterdiği kartı yeniden çizmek |
 | `npm run licenses` | `THIRD-PARTY-NOTICES.md` dosyasını lock dosyalarından yeniden üret |
 
 CI yok: whisper.cpp ve llama.cpp kaynaktan derleniyor ve test düzeneği sesi

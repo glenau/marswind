@@ -198,6 +198,7 @@ npm run dev:macos
 | `npm run build:dmg` | підписаний `.dmg`, щоб комусь передати |
 | `npm run build:sidecar` | лише перекладач |
 | `npm run build:icons` | перемалювати іконку зі `scripts/make-icon.py` |
+| `npm run build:social` | перемалювати картку, яку GitHub показує за посиланням |
 | `npm run licenses` | перезібрати `THIRD-PARTY-NOTICES.md` з lock-файлів |
 
 CI немає: whisper.cpp і llama.cpp компілюються з коду, а стенд програє звук

@@ -193,6 +193,7 @@ npm run dev:macos
 | `npm run build:dmg` | 他人に渡せる署名済み `.dmg` |
 | `npm run build:sidecar` | 翻訳ワーカーのみ |
 | `npm run build:icons` | `scripts/make-icon.py` からアイコンを再生成 |
+| `npm run build:social` | GitHub がリンクに表示するプレビューカードを描き直す |
 | `npm run licenses` | ロックファイルから `THIRD-PARTY-NOTICES.md` を再生成する |
 
 CI はありません。whisper.cpp と llama.cpp をソースからコンパイルし、テスト環境がシステム

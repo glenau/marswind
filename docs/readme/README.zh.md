@@ -177,6 +177,7 @@ npm run dev:macos
 | `npm run build:dmg` | 生成可交给他人的已签名 `.dmg` |
 | `npm run build:sidecar` | 单独构建翻译工作进程 |
 | `npm run build:icons` | 由 `scripts/make-icon.py` 重绘应用图标 |
+| `npm run build:social` | 重绘 GitHub 在分享链接时展示的预览卡片 |
 | `npm run licenses` | 依据 lock 文件重新生成 `THIRD-PARTY-NOTICES.md` |
 
 没有 CI：whisper.cpp 和 llama.cpp 从源码编译，而测试台需要通过系统输出播放音频，因此

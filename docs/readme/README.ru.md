@@ -201,6 +201,7 @@ npm run dev:macos
 | `npm run build:dmg` | подписанный `.dmg`, чтобы кому-то передать |
 | `npm run build:sidecar` | только переводчик |
 | `npm run build:icons` | перерисовать иконку из `scripts/make-icon.py` |
+| `npm run build:social` | перерисовать карточку, которую GitHub показывает по ссылке |
 | `npm run licenses` | пересобрать `THIRD-PARTY-NOTICES.md` из lock-файлов |
 
 CI нет: whisper.cpp и llama.cpp компилируются из исходников, а стенд проигрывает

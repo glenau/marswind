@@ -189,6 +189,7 @@ npm run dev:macos
 | `npm run build:dmg` | 남에게 건넬 서명된 `.dmg` |
 | `npm run build:sidecar` | 번역 워커만 빌드 |
 | `npm run build:icons` | `scripts/make-icon.py`로 아이콘 다시 그리기 |
+| `npm run build:social` | GitHub가 링크에 보여 주는 미리보기 카드를 다시 그리기 |
 | `npm run licenses` | 잠금 파일에서 `THIRD-PARTY-NOTICES.md` 다시 생성 |
 
 CI는 없습니다. whisper.cpp와 llama.cpp를 소스에서 컴파일하고, 테스트 도구가 시스템
