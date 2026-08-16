@@ -102,13 +102,19 @@ crash.
 ## Publishing
 
 ```bash
-git tag -a v0.1.0 -m "v0.1.0"
-git push origin v0.1.0
-gh release create v0.1.0 \
-  src-tauri/target/Marswind-0.1.0-arm64.dmg \
-  --title "Marswind 0.1.0" \
+git tag -a v0.1.1 -m "v0.1.1"
+git push origin v0.1.1
+gh release create v0.1.1 \
+  src-tauri/target/Marswind-0.1.1-arm64.dmg \
+  src-tauri/target/Marswind-0.1.1-arm64.dmg.sha256 \
+  --title "Marswind 0.1.1" \
   --notes-file notes.md
 ```
+
+**Both files, every time.** The in-app update check refuses a release whose
+image has no `.sha256` beside it, because a download it cannot verify is one it
+should not save. Leave the digest off and everyone on the previous version is
+told there is nothing new.
 
 The release notes should carry, every time:
 

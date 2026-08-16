@@ -10,14 +10,79 @@
    * say which build a bug report is about.
    */
   import { base } from "$app/paths";
-  import { openUrl } from "@tauri-apps/plugin-opener";
-  import { HOMEPAGE, ISSUES, LICENSE, NOTICES, appVersion, runtimeVersion } from "./api";
+  import { onDestroy } from "svelte";
+  import { listen, type UnlistenFn } from "@tauri-apps/api/event";
+  import { openUrl, revealItemInDir } from "@tauri-apps/plugin-opener";
+  import {
+    HOMEPAGE,
+    ISSUES,
+    LICENSE,
+    NOTICES,
+    appVersion,
+    checkForUpdate,
+    downloadUpdate,
+    formatSize,
+    runtimeVersion,
+    type UpdateInfo,
+    type UpdateProgressEvent,
+  } from "./api";
   import type { Translate } from "./i18n";
 
   let { t }: { t: Translate } = $props();
 
   let version = $state("");
   let runtime = $state("");
+
+  /**
+   * The update check, which is the only network request this app makes that is
+   * not a model download - and it makes it here, on a press, rather than on a
+   * timer or at launch. That is the whole reason it lives behind a button: the
+   * promise elsewhere in this project is that nothing goes out unasked, and a
+   * background check would quietly make that untrue.
+   */
+  type Stage = "idle" | "checking" | "latest" | "found" | "downloading" | "saved" | "failed";
+
+  let stage = $state<Stage>("idle");
+  let available = $state<UpdateInfo | null>(null);
+  let progress = $state({ done: 0, total: 0 });
+  let saved = $state("");
+  let failure = $state("");
+  let unlisten: UnlistenFn | undefined;
+
+  async function check() {
+    stage = "checking";
+    failure = "";
+    try {
+      available = await checkForUpdate();
+      stage = available ? "found" : "latest";
+    } catch (e) {
+      failure = String(e);
+      stage = "failed";
+    }
+  }
+
+  async function download() {
+    if (!available) return;
+    stage = "downloading";
+    progress = { done: 0, total: available.sizeBytes };
+    unlisten ??= await listen<UpdateProgressEvent>("update://progress", (event) => {
+      const { downloadedBytes, totalBytes } = event.payload;
+      progress = { done: downloadedBytes, total: totalBytes };
+    });
+
+    try {
+      saved = await downloadUpdate(available);
+      stage = "saved";
+      // Straight to Finder: what is left is the two drags the user already
+      // knows, and pointing at the file is more use than naming its folder.
+      await revealItemInDir(saved);
+    } catch (e) {
+      failure = String(e);
+      stage = "failed";
+    }
+  }
+
+  onDestroy(() => unlisten?.());
 
   /// What the app is actually built out of, in the order a reader meets it:
   /// the window, then the code behind it, then the two runtimes that do the
@@ -87,6 +152,41 @@
     <h3>{t("about.how")}</h3>
     <p>{t("about.howCapture")}</p>
     <p>{t("about.howPipeline")}</p>
+  </div>
+
+  <!-- Below the description of what the app is, because somebody reading this
+       panel top to bottom is finding out what Marswind is before they are
+       asking whether theirs is current. -->
+  <div class="update">
+    <h3>{t("about.updates")}</h3>
+
+    {#if stage === "found" && available}
+      <p class="line">{t("about.updateFound")} <strong>{available.version}</strong></p>
+      <button class="primary" onclick={download}>
+        {t("about.updateDownload")} · {formatSize(available.sizeBytes)}
+      </button>
+    {:else if stage === "downloading"}
+      <div class="bar">
+        <div
+          class="fill"
+          style="width: {progress.total ? (100 * progress.done) / progress.total : 0}%"
+        ></div>
+      </div>
+      <p class="line">{formatSize(progress.done)} {t("models.of")} {formatSize(progress.total)}</p>
+    {:else if stage === "saved"}
+      <p class="line">{t("about.updateSaved")}</p>
+      <button onclick={() => revealItemInDir(saved)}>{t("about.updateShow")}</button>
+    {:else if stage === "failed"}
+      <p class="line error">{failure}</p>
+      <button onclick={check}>{t("about.updateCheck")}</button>
+    {:else}
+      {#if stage === "latest"}
+        <p class="line">{t("about.updateLatest")}</p>
+      {/if}
+      <button onclick={check} disabled={stage === "checking"}>
+        {stage === "checking" ? t("about.updateChecking") : t("about.updateCheck")}
+      </button>
+    {/if}
   </div>
 
   <div class="links">
@@ -170,11 +270,41 @@
   }
 
   .built,
-  .how {
+  .how,
+  .update {
     width: 100%;
     margin-top: var(--space-5);
     padding-top: var(--space-5);
     border-top: 1px solid var(--line);
+  }
+
+  /* One line of state above one button, centred with the rest of the panel.
+     The states replace each other rather than stacking: this section says one
+     thing at a time, and a history of what it said is not useful here. */
+  .update .line {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-md);
+    line-height: 1.5;
+    color: var(--muted);
+  }
+
+  .update .line.error {
+    color: var(--error-ink);
+  }
+
+  .update .bar {
+    margin: 0 auto var(--space-3);
+    max-width: 20rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background: var(--raised);
+    overflow: hidden;
+  }
+
+  .update .bar .fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 200ms ease;
   }
 
   /* Ranged left, alone on this panel: these are paragraphs rather than labels,

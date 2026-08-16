@@ -67,9 +67,10 @@ Stated here because it is the answer to most security questions about it:
 
 - Audio is captured, resampled and recognized **in memory**. It is not written
   to disk and not sent anywhere.
-- The only network traffic the app makes is downloading models from Hugging
-  Face, on your explicit request, and it makes none at all once they are
-  installed.
+- The app makes two kinds of network request and both begin with a button:
+  downloading a model from Hugging Face, and asking GitHub whether there is a
+  newer release. Neither happens on a timer or at launch, and between them the
+  process is silent.
 - There is no telemetry, no analytics, no crash reporting and no account.
 - Transcripts are written to your app data directory, and only there, so that
   the History view has something to show. Delete them from inside the app or

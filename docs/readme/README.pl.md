@@ -9,7 +9,7 @@ offline.**
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#platformy)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 [English](../../README.md) ·
 [Русский](README.ru.md) ·
@@ -45,8 +45,9 @@ nigdzie indziej.
   zamiast być przepisywane pod czytającym
 - **Tłumaczy w trakcie mówienia** - słowa trafiają do tłumacza od razu po
   ustaleniu, a nie po zakończeniu zdania, a tłumaczenie przychodzi słowo po słowie
-- **Zarządza modelami** z poziomu aplikacji: siedem modeli rozpoznawania i pięć
-  tłumaczenia, pobieranych z postępem i weryfikacją SHA-256
+- **Zarządza modelami** z poziomu aplikacji: sześć modeli rozpoznawania i trzy
+  tłumaczenia, wszystkie na MIT albo Apache-2.0, pobierane z postępem i
+  weryfikacją SHA-256
 - **Zapisuje każdą sesję** - można je przeglądać i eksportować jako tekst, napisy
   (`.srt`) albo JSON wraz z czasami
 - **Zawiera przykładowe nagrania**, żeby dało się to sprawdzić bez szukania filmu
@@ -103,7 +104,7 @@ platformie: przechwyt idzie przez natywne API systemu.
 |---|---|
 | macOS | 14.4 lub nowszy, Apple Silicon albo Intel |
 | Pamięć | 8 GB dla samego rozpoznawania, 16 GB z tłumaczeniem |
-| Dysk | 0,5-4,5 GB na wybrane modele |
+| Dysk | 0,1-6,5 GB na wybrane modele |
 | Do zbudowania | [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 20+, cmake (`brew install cmake`) |
 
 ## Instalacja
@@ -168,6 +169,19 @@ Dwie rzeczy o kopii zbudowanej samodzielnie:
   macOS pyta ponownie. Kończy to certyfikat Developer ID, którego jeszcze nie ma.
 - **Nie przenoś aplikacji w trakcie działania.** Aby ją zaktualizować, uruchom
   ponownie `npm run install:macos`; podmienia `/Applications/Marswind.app` w miejscu.
+
+### Aktualizacja
+
+**Ustawienia → O programie → Sprawdź aktualizacje.** Aplikacja pyta GitHuba, czy
+jest nowsze wydanie; jeśli jest, pobiera obraz do Pobranych, porównuje go z sumą
+kontrolną opublikowaną obok i pokazuje w Finderze. Instalacja to to samo
+przeciągnięcie co za pierwszym razem.
+
+Nic nie sprawdza się samo: żadnego timera ani sprawdzania przy starcie, bo
+aplikacja nie wykonuje żądań sieciowych, których nie nacisnąłeś.
+
+Kopię zbudowaną samodzielnie aktualizuje się tak, jak ją zainstalowano: ponownie
+`npm run install:macos`.
 
 ### Budowanie obrazu dysku
 
@@ -242,8 +256,8 @@ przebiegów i czytaj transkrypcje, a nie tylko wyniki.
 
 - Dźwięk jest przechwytywany, przepróbkowywany i rozpoznawany **w pamięci**. Nigdy
   nie trafia na dysk ani nigdzie indziej.
-- Jedyny ruch sieciowy to pobieranie modeli, o które prosisz. Po instalacji
-  aplikacja nie generuje żadnego.
+- Jedyny ruch sieciowy to ten, dla którego naciskasz przycisk: pobranie modelu
+  albo sprawdzenie aktualizacji. Nic nie dzieje się z timera ani przy starcie.
 - Bez telemetrii, bez analityki, bez raportów awarii, bez konta.
 - Transkrypcje zapisywane są wyłącznie w katalogu danych aplikacji, żeby widok
   Historii miał co pokazać. Usuwa się je z poziomu aplikacji.
@@ -279,12 +293,11 @@ Całe drzewo zależności, z licencją każdego pakietu, jest w
 lock i dołączanym do aplikacji obok samej licencji.
 
 **Modeli to wszystko nie obejmuje.** Pobierane są z
-[Hugging Face](https://huggingface.co) na twoją prośbę i zachowują warunki
-swoich wydawców: modele whisper i Silero są na MIT, Qwen3 na Apache-2.0, a Gemma
-3 na [własnych warunkach Google](https://ai.google.dev/gemma/terms), które nie
-są licencją open source i nakładają ograniczenia na to, do czego wolno użyć
-wyniku. Każdy wiersz w ustawieniach podaje swoją licencję, zanim ruszy
-pobieranie. Szczegóły w [docs/MODELS.md](../MODELS.md).
+[Hugging Face](https://huggingface.co) na twoją prośbę i zachowują warunki swoich
+wydawców - a do katalogu trafiają tylko te, których warunki można przyjąć bez
+czytania: modele whisper i Silero są na MIT, Qwen3 na Apache-2.0. Każdy wiersz w
+ustawieniach podaje swoją licencję, zanim ruszy pobieranie. Szczegóły w
+[docs/MODELS.md](../MODELS.md).
 
 ## Licencja
 

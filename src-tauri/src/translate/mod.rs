@@ -101,7 +101,6 @@ pub struct TranslateConfig {
     pub model_id: String,
     /// How this model wants its conversation laid out. It travels with the
     /// model rather than being guessed from its name.
-    pub prompt: &'static str,
     pub target: Language,
 }
 
@@ -241,7 +240,6 @@ fn run(
         Engine::Llm => Box::new(sidecar::SidecarTranslator::spawn(
             &config.model_path,
             recommended_threads(),
-            config.prompt,
         )?),
     };
 

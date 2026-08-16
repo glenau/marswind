@@ -1,6 +1,6 @@
 [package]
 name = "marswind"
-version = "0.1.0"
+version = "0.1.1"
 description = "Offline live subtitles and translation for system audio"
 authors = ["Gleb Naumov"]
 license = "MIT"

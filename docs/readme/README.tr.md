@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](../../LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#platformlar)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 [English](../../README.md) ·
 [Русский](README.ru.md) ·
@@ -44,8 +44,9 @@ gönderilmez.
   yeniden yazılmak yerine konuşma ilerledikçe uzar
 - **Konuşma sürerken çevirir** - kelimeler cümle bitince değil, sabitlenir
   sabitlenmez çeviriciye gider ve çeviri kelime kelime gelir
-- **Modelleri uygulama içinden yönetir**: yedi tanıma ve beş çeviri modeli,
-  ilerleme göstergesi ve SHA-256 doğrulamasıyla indirilir
+- **Modelleri uygulama içinden yönetir**: altı tanıma ve üç çeviri modeli,
+  hepsi MIT ya da Apache-2.0, ilerleme göstergesi ve SHA-256 doğrulamasıyla
+  indirilir
 - **Her oturumu kaydeder** - sonradan göz atılabilir; metin, altyazı (`.srt`) ya
   da zaman bilgileriyle JSON olarak dışa aktarılabilir
 - **Örnek ses klipleriyle gelir**, video aramadan denenebilsin diye
@@ -102,7 +103,7 @@ işletim sisteminin yerel API'lerinden geçer.
 |---|---|
 | macOS | 14.4 veya üzeri, Apple Silicon ya da Intel |
 | Bellek | Yalnız tanıma için 8 GB, çeviriyle birlikte 16 GB |
-| Disk | Seçtiğiniz modeller için 0,5-4,5 GB |
+| Disk | Seçtiğiniz modeller için 0,1-6,5 GB |
 | Derlemek için | [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 20+, cmake (`brew install cmake`) |
 
 ## Kurulum
@@ -168,6 +169,19 @@ Kendi derlediğiniz kopya hakkında iki not:
 - **Çalışırken uygulamayı taşımayın.** Güncellemek için `npm run install:macos`
   komutunu yeniden çalıştırın; `/Applications/Marswind.app` dosyasını yerinde
   değiştirir.
+
+### Güncelleme
+
+**Ayarlar → Hakkında → Güncellemeleri denetle.** Uygulama GitHub'a daha yeni bir
+sürüm olup olmadığını sorar; varsa imajı İndirilenler'e indirir, yanında
+yayımlanan sağlama toplamıyla karşılaştırır ve Finder'da gösterir. Kurmak,
+ilk seferkiyle aynı sürüklemedir.
+
+Kendi kendine hiçbir şey denetlenmez: zamanlayıcı yok, açılışta denetim yok,
+çünkü uygulama sizin basmadığınız hiçbir ağ isteği yapmaz.
+
+Kendi derlediğiniz kopya, kurulduğu gibi güncellenir: yine
+`npm run install:macos`.
 
 ### Disk imajı oluşturma
 
@@ -240,8 +254,8 @@ karşılaştırın ve yalnızca puanları değil dökümleri de okuyun.
 
 - Ses **bellekte** yakalanır, yeniden örneklenir ve tanınır. Asla diske yazılmaz
   ve hiçbir yere gönderilmez.
-- Tek ağ trafiği, istediğiniz modellerin indirilmesidir. Kurulduktan sonra
-  uygulama hiç ağ trafiği üretmez.
+- Tek ağ trafiği, bir düğmeye bastığınız şeydir: model indirmek ya da güncelleme
+  denetlemek. Hiçbir şey zamanlayıcıyla veya açılışta çalışmaz.
 - Telemetri yok, analitik yok, çökme raporu yok, hesap yok.
 - Dökümler yalnızca uygulamanın veri klasörüne yazılır, Geçmiş görünümünün
   gösterecek bir şeyi olsun diye. Uygulama içinden silinebilirler.
@@ -278,9 +292,8 @@ dosyalarından üretiliyor ve uygulamanın içine lisansın yanına konuyor.
 
 **Bunların hiçbiri modelleri kapsamaz.** Modeller senin isteğin üzerine
 [Hugging Face](https://huggingface.co) üzerinden iniyor ve yayımcılarının
-koşullarını koruyor: whisper ve Silero modelleri MIT, Qwen3 Apache-2.0, Gemma 3
-ise açık kaynak lisansı olmayan ve çıktının kullanımına koşul koyan
-[Google'ın kendi koşulları](https://ai.google.dev/gemma/terms) altında.
+koşullarını koruyor - kataloğa ise yalnızca koşulları okumadan kabul
+edilebilecek olanlar giriyor: whisper ve Silero modelleri MIT, Qwen3 Apache-2.0.
 Ayarlardaki her satır, indirme başlamadan önce lisansını yazar. Ayrıntılar
 [docs/MODELS.md](../MODELS.md) içinde.
 

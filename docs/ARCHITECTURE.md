@@ -22,9 +22,11 @@ A desktop app that captures the audio your computer is playing - a video in a
 browser, a call, a local file - recognizes the speech in it, and shows a
 translation beside the original as the speaker talks.
 
-It makes **zero network requests while running**. The network is used exactly
-once per model: to download it. Audio is held in memory, recognized in memory,
-and never written to disk.
+It makes **no network request you did not ask for**. There are exactly two that
+it can make, and both start with a press: downloading a model, and the update
+check in Settings. Nothing runs on a timer, nothing goes out at launch, and
+between those presses the process is silent. Audio is held in memory,
+recognized in memory, and never written to disk.
 
 The frontend is SvelteKit + TypeScript inside [Tauri 2](https://tauri.app);
 everything below it is Rust.
@@ -270,17 +272,22 @@ dropped now.
 
 ### Recognition models
 
-Seven, downloaded from Hugging Face inside the app with progress reporting and
+Six, downloaded from Hugging Face inside the app with progress reporting and
 SHA-256 verification against `src-tauri/src/models/catalog.rs`.
 
 | Model | Size | Where it fits |
 |---|---|---|
-| `tiny.en` | ~78 MB | Old hardware, or a smoke test |
+| `tiny` | ~78 MB | Old hardware, or a smoke test |
 | `base` | ~148 MB | Compromise on machines with little memory |
-| `small.en` / `small` | ~488 MB | Practical quality floor |
+| `small` | ~488 MB | Practical quality floor |
 | `large-v3-turbo-q5_0` | ~574 MB | Best quality per gigabyte; the default above 16 GB |
 | `medium` | ~1.5 GB | Strong, and heavier than Turbo for similar results |
 | `large-v3-turbo` | ~1.6 GB | Highest accuracy, wants 8 GB free |
+
+All six are multilingual. whisper also publishes `.en` builds, smaller and more
+accurate at their size, and 0.1.1 dropped the two that were offered: this app
+exists to caption speech in a language the reader does not have, and a
+recognizer that only hears English cannot take part in that.
 
 Sizes and checksums come from the Hugging Face LFS metadata of the source
 repositories, so an interrupted download cannot be mistaken for a good one. A
@@ -302,8 +309,8 @@ config, so a lighter one can be added without the rest of the pipeline noticing.
 
 ### The engine: a small instruct model
 
-Qwen3 1.7B/4B/8B and Gemma 3 4B/12B in GGUF through llama.cpp, all Q4_K_M. This
-is heavier than a dedicated MT model and buys two things worth the weight:
+Qwen3 1.7B/4B/8B in GGUF through llama.cpp, all Q4_K_M. This is heavier than a
+dedicated MT model and buys two things worth the weight:
 
 - **any language pair** without downloading another model;
 - **context** - previous captions go into the prompt as conversation turns, so a
@@ -316,12 +323,11 @@ fragment, and a sentence the speaker has not finished is not to be finished for
 them. Without that the model completes the thought it thinks it heard, and the
 next caption then translates the same words again.
 
-**The prompt layout travels with the model.** Qwen wants ChatML; Gemma wants its
-own turn markers and has no system role at all, so the instruction has to ride on
-the front of the first user turn. A model handed the wrong layout does not fail -
-it answers with the markers written out as text and no idea where its turn ends -
-so the family is a field on the catalogue entry (`PromptFamily`) passed to the
-worker as `--template`, rather than guessed from a file name.
+**The prompt is ChatML**, which is what Qwen expects, and the worker writes no
+other layout. A model from a family with different turn markers does not fail on
+the wrong one - it answers with the markers written out as text and no idea
+where its turn ends - so a new family means teaching the worker its format
+rather than adding a catalog entry and hoping.
 
 ### Why translation runs in its own process
 
@@ -407,9 +413,7 @@ translator is no longer taking the GPU away from it.
 |---|---|---|---|
 | `qwen3-1.7b-q4` | ~1.3 GB | ChatML | Below 16 GB. Measurably clumsier |
 | `qwen3-4b-instruct-q4` | ~2.5 GB | ChatML | The default above 16 GB |
-| `gemma3-4b-q4` | ~2.5 GB | Gemma | Often better on European languages |
 | `qwen3-8b-q4` | ~5.0 GB | ChatML | Steadier on long sentences, slower per line |
-| `gemma3-12b-q4` | ~7.3 GB | Gemma | The best here, and the heaviest |
 
 Thirteen target languages, listed in `src-tauri/src/translate/language.rs`. The
 **English** name of the language is what goes into the prompt - instruction-tuned
@@ -739,6 +743,34 @@ certificate is what makes that stop.
 - **Not notarized.** The image opens on the machine that built it; on anyone
   else's it has to be let through Gatekeeper by hand.
   [RELEASING.md](RELEASING.md) is the checklist for cutting one.
+
+### Updating
+
+A button in Settings → About, and nothing else. It reads GitHub's
+`releases/latest`, compares the tag against the running version, and if there is
+a newer one downloads that architecture's `.dmg` into Downloads and shows it in
+Finder. `src-tauri/src/update.rs`.
+
+Three decisions inside that are worth stating.
+
+**It is a press, not a timer.** This app promises that nothing goes out unasked,
+and a check on launch would quietly make that untrue for a claim repeated in
+three files. There is no interval, no setting, and nothing to switch off,
+because nothing runs.
+
+**It downloads but does not install.** `tauri-plugin-updater` would swap the
+bundle and restart, and it wants a signing key and a manifest to do it. The
+reward would be small: the app is ad-hoc signed, so every new build is a new
+identity to macOS and the Audio Recording permission gets asked for again
+whichever way the file arrives. What is left worth automating is the download
+and the checksum, and those are what this does.
+
+**A release without a checksum is refused.** GitHub publishes no digest for an
+attachment, so `scripts/build-dmg.sh` writes a `.dmg.sha256` beside the image
+and the release carries both. The download is hashed as it streams and thrown
+away on a mismatch - the same path a model takes, for the same reason. Forget
+to attach the digest and the check reports no update rather than installing
+something it cannot vouch for.
 
 ## Tried and reverted
 

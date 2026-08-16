@@ -8,7 +8,7 @@
 
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Platform: macOS 14.4+](https://img.shields.io/badge/platform-macOS%2014.4%2B-lightgrey.svg)](#platform-support)
-[![Version](https://img.shields.io/badge/version-0.1.0-brightgreen.svg)](#)
+[![Version](https://img.shields.io/badge/version-0.1.1-brightgreen.svg)](#)
 
 **English** ·
 [Русский](docs/readme/README.ru.md) ·
@@ -45,8 +45,9 @@ anywhere.
 - **Translates as the speaker talks** - words go to the translator as soon as
   they are committed, not once the sentence is finished, and the translation
   streams in a word at a time
-- **Manages models** from inside the app: seven recognition models and five
-  translation models, downloaded with progress and SHA-256 verification
+- **Manages models** from inside the app: six recognition models and three
+  translation models, every one of them MIT or Apache-2.0, downloaded with
+  progress and SHA-256 verification
 - **Records every session** - browse past ones and export them as text,
   subtitles (`.srt`) or JSON with the timings behind them
 - **Ships sample clips** so it can be tried without going to find a video
@@ -104,7 +105,7 @@ capture goes through the native OS APIs.
 |---|---|
 | macOS | 14.4 or newer, Apple Silicon or Intel |
 | Memory | 8 GB for recognition alone, 16 GB with translation |
-| Disk | 0.5-4.5 GB for the models you choose |
+| Disk | 0.1-6.5 GB for the models you choose |
 | To build | [Rust](https://rustup.rs), [Node.js](https://nodejs.org) 20+, cmake (`brew install cmake`) |
 
 ## Install
@@ -170,6 +171,19 @@ Two things worth knowing about a copy you built yourself:
   this, and there is none yet.
 - **Do not move the app while it is running.** To update it, rerun
   `npm run install:macos`; it replaces `/Applications/Marswind.app` in place.
+
+### Updating
+
+**Settings → About → Check for updates.** It asks GitHub whether there is a
+newer release; if there is, it downloads that image into Downloads, checks it
+against the checksum published beside it, and shows it in Finder. Installing it
+is the same drag as the first time.
+
+Nothing checks on its own. There is no timer and no check at launch, because the
+app makes no network request you did not press a button for.
+
+A copy you built yourself updates the way it was installed: `npm run
+install:macos` again.
 
 ### Building a disk image
 
@@ -242,8 +256,8 @@ read the transcripts and not only the scores.
 
 - Audio is captured, resampled and recognized **in memory**. It is never written
   to disk and never sent anywhere.
-- The only network traffic is downloading the models you ask for. Once they are
-  installed the app makes none at all.
+- The only network traffic is what you press a button for: downloading a model,
+  or checking for a new version. Nothing runs on a timer or at launch.
 - No telemetry, no analytics, no crash reporting, no account.
 - Transcripts are written to your app data directory and nowhere else, so the
   History view has something to show. Delete them from inside the app.
@@ -280,10 +294,9 @@ the lockfiles, and shipped inside the app alongside the license itself.
 
 **Models are not covered by any of that.** They are downloaded from
 [Hugging Face](https://huggingface.co) on your request and keep their
-publishers' terms: the whisper and Silero models are MIT, Qwen3 is Apache-2.0,
-and Gemma 3 is under [Google's own terms](https://ai.google.dev/gemma/terms),
-which are not an open-source license and place conditions on what the output may
-be used for. Each row in Settings names its license before the download starts.
+publishers' terms - and the catalog only offers models under one people can take
+at face value: the whisper and Silero models are MIT, Qwen3 is Apache-2.0. Each
+row in Settings names its license before the download starts.
 [docs/MODELS.md](docs/MODELS.md) has the detail.
 
 ## License

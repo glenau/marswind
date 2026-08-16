@@ -1,15 +1,25 @@
 # Models
 
-Marswind ships no models. It ships a catalog - thirteen entries in
+Marswind ships no models. It ships a catalog - ten entries in
 [`src-tauri/src/models/catalog.rs`](../src-tauri/src/models/catalog.rs), each
 with a URL, a size and a SHA-256 - and downloads the ones you ask for on first
 run. That keeps the disk image at about 13 MB instead of several gigabytes, and
 it means the weights on your disk came from the people who published them rather
 than from a copy someone repackaged.
 
-It also means **the licenses are theirs, not this project's.** Marswind is MIT;
-what you download through it is not necessarily. One family in particular is
-not open source at all.
+Two rules decide what gets a row.
+
+**Everything offered is open source.** MIT or Apache-2.0, nothing else.
+Marswind is MIT, and a catalog is not the place to hand somebody terms they did
+not go looking for.
+
+**Nothing is English-only.** whisper's `.en` builds are smaller and more
+accurate at their size, and they are still not offered: this is an app for
+watching things in languages you do not speak, and a recognizer that only hears
+English cannot do that.
+
+Neither rule is a limit of the app. Both are enforced by tests in the catalog,
+so a row that breaks one fails the build rather than reaching a user.
 
 ## What you need
 
@@ -17,8 +27,8 @@ Two models to start, three files on disk:
 
 | | | |
 |---|---|---|
-| **Recognition** | one of seven whisper models | 78 MB - 1.6 GB |
-| **Translation** | one of five instruct models | 1.3 - 7.3 GB |
+| **Recognition** | one of six whisper models | 78 MB - 1.6 GB |
+| **Translation** | one of three Qwen3 models | 1.3 - 5.0 GB |
 | **Voice activity** | Silero VAD, installed with either | 865 KB |
 
 The VAD model is required and small enough not to be a decision. Recognition
@@ -35,6 +45,33 @@ makes it less accurate.
 | 8 GB | `Small` | `Qwen3 1.7B` |
 | less | `Base` | `Qwen3 1.7B` |
 
+## The catalog
+
+### Recognition
+
+| Model | Size | Where it fits |
+|---|---|---|
+| `tiny` | 78 MB | Old hardware, or a quick smoke test |
+| `base` | 148 MB | Compromise on machines with little memory |
+| `small` | 488 MB | The practical quality floor |
+| `large-v3-turbo-q5_0` | 574 MB | Best quality per gigabyte; the default above 16 GB |
+| `medium` | 1.5 GB | Strong, and heavier than Turbo for similar results |
+| `large-v3-turbo` | 1.6 GB | Highest accuracy, wants 8 GB free |
+
+All six understand the 99 languages whisper was trained on, and work out which
+one is being spoken unless you tell them.
+
+### Translation
+
+| Model | Size | Where it fits |
+|---|---|---|
+| `qwen3-1.7b-q4` | 1.3 GB | Below 16 GB. Measurably clumsier |
+| `qwen3-4b-instruct-q4` | 2.5 GB | The default above 16 GB |
+| `qwen3-8b-q4` | 5.0 GB | Steadier on long sentences, slower per line |
+
+All three are Qwen3 in GGUF at Q4_K_M, and all three translate into any of the
+thirteen target languages without a second download.
+
 ## Licenses
 
 Every row in Settings names its license next to the Install button, and the name
@@ -42,38 +79,15 @@ is a link to the terms. This table is the same information in one place.
 
 | Model | Published by | License |
 |---|---|---|
-| whisper `tiny.en` … `large-v3-turbo` | [ggerganov/whisper.cpp](https://huggingface.co/ggerganov/whisper.cpp) | [MIT](https://opensource.org/license/mit) |
+| whisper `tiny` … `large-v3-turbo` | [ggerganov/whisper.cpp](https://huggingface.co/ggerganov/whisper.cpp) | [MIT](https://opensource.org/license/mit) |
 | Silero VAD `v5.1.2` | [ggml-org/whisper-vad](https://huggingface.co/ggml-org/whisper-vad) | [MIT](https://opensource.org/license/mit) |
 | Qwen3 1.7B | [ggml-org/Qwen3-1.7B-GGUF](https://huggingface.co/ggml-org/Qwen3-1.7B-GGUF) | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) |
 | Qwen3 4B Instruct | [unsloth/Qwen3-4B-Instruct-2507-GGUF](https://huggingface.co/unsloth/Qwen3-4B-Instruct-2507-GGUF) | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) |
 | Qwen3 8B | [unsloth/Qwen3-8B-GGUF](https://huggingface.co/unsloth/Qwen3-8B-GGUF) | [Apache-2.0](https://www.apache.org/licenses/LICENSE-2.0) |
-| Gemma 3 4B | [unsloth/gemma-3-4b-it-GGUF](https://huggingface.co/unsloth/gemma-3-4b-it-GGUF) | [Gemma Terms of Use](https://ai.google.dev/gemma/terms) |
-| Gemma 3 12B | [unsloth/gemma-3-12b-it-GGUF](https://huggingface.co/unsloth/gemma-3-12b-it-GGUF) | [Gemma Terms of Use](https://ai.google.dev/gemma/terms) |
 
-### The Gemma models are not open source
-
-They are free to download and good at European languages, which is why they are
-offered. They are also the one thing in this app that comes with strings
-attached, so it is worth being plain about what they are:
-
-- The [Gemma Terms of Use](https://ai.google.dev/gemma/terms) are Google's own
-  license, not an OSI-approved one. Redistributing the weights, or anything
-  derived from them, means passing the same terms and the
-  [Prohibited Use Policy](https://ai.google.dev/gemma/prohibited_use_policy)
-  along with them.
-- Those restrictions reach the **output**, which for Marswind means the
-  translations on your screen. Nothing in the terms interferes with reading
-  subtitles; if you intend to publish or build on what comes out, read them.
-- Google may update the Prohibited Use Policy, and the terms bind you to the
-  current version.
-
-Pick a Qwen3 model instead if you would rather not think about any of this.
-Apache-2.0 asks for attribution and nothing else, and on most language pairs the
-difference is small.
-
-Marswind itself never redistributes these weights, so its own MIT license is
-unaffected either way. The obligations are between you and the publisher, which
-is exactly why the app names them before the download starts rather than after.
+Marswind never redistributes these weights, so its own MIT license would be
+unaffected whatever the catalog held. Keeping it to MIT and Apache-2.0 is a
+choice about what to put behind an Install button, not a legal necessity.
 
 ## What a download does
 
@@ -102,6 +116,11 @@ Nothing else in that directory is a model: transcripts and exports are its
 neighbours, and are described in
 [ARCHITECTURE.md](ARCHITECTURE.md#data-on-disk).
 
+**A model the catalog no longer lists is not deleted from your disk.** Nothing
+reads it any more, and the app will not offer to remove something it does not
+list, so a file left over from an older version sits there until you delete it
+by hand.
+
 ## Adding one
 
 A new entry needs the fields in `ModelSpec`, and the three that cannot be
@@ -114,12 +133,13 @@ shasum -a 256 path/to/model.gguf
 stat -f %z path/to/model.gguf
 ```
 
-A translation model also needs its `PromptFamily` - ChatML for Qwen and
-Qwen-derived models, Gemma for Gemma. A model handed the wrong one does not
-fail; it answers with the turn markers written out as text, which is a
-confusing bug to chase from the transcript. There is no auto-detection because
-guessing from a file name is how that bug gets shipped.
+The worker lays every prompt out as ChatML, which is what Qwen and
+Qwen-derived models expect. A model from a family that wants different turn
+markers does not fail; it answers with the markers written out as text, which is
+a confusing bug to chase from a transcript. Adding one means teaching
+`translator/src/engine.rs` its format first.
 
 The catalog's tests check that every entry is uniquely addressable, that its
-digest is well formed, that its URL ends in its file name, and that the license
-on the row matches the repository it points at.
+digest is well formed, that its URL ends in its file name, that the license on
+the row matches the repository it points at, that the license is one of the two
+this project offers, and that no `.en` build has slipped in.

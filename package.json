@@ -1,6 +1,6 @@
 {
   "name": "marswind",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Live subtitles and translation for your computer's audio, running entirely offline",
   "type": "module",
   "keywords": [

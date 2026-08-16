@@ -8,10 +8,10 @@
    * is the only question this list has to answer.
    *
    * Each row also names the license its weights come under, next to the button
-   * that fetches them. Most are MIT or Apache-2.0 and nobody needs to think
-   * about it; Gemma is under Google's own terms, which are not an open-source
-   * license, and the moment to learn that is before a two-gigabyte download
-   * rather than after.
+   * that fetches them. Everything in the catalog is MIT or Apache-2.0, so today
+   * that line is reassurance rather than a warning - but it is the app that
+   * does the downloading, and the moment to see the terms is before a
+   * two-gigabyte transfer rather than after.
    */
   import { onMount, onDestroy } from "svelte";
   import { listen, type UnlistenFn } from "@tauri-apps/api/event";

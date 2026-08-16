@@ -45,7 +45,6 @@ export type ModelStatus = {
   note: string;
   kind: ModelKind;
   sizeBytes: number;
-  multilingual: boolean;
   installed: boolean;
   downloading: boolean;
   recommended: boolean;
@@ -206,6 +205,28 @@ export const removeSession = (id: string) => invoke<void>("remove_session", { id
 /** Returns the file it wrote, which is what the History view reveals in Finder. */
 export const exportSession = (id: string, format: ExportFormat) =>
   invoke<string>("export_session", { id, format });
+
+/** A release newer than the one running, as `check_for_update` found it. */
+export type UpdateInfo = {
+  version: string;
+  pageUrl: string;
+  assetName: string;
+  assetUrl: string;
+  checksumUrl: string;
+  sizeBytes: number;
+};
+
+export type UpdateProgressEvent = {
+  downloadedBytes: number;
+  totalBytes: number;
+  done: boolean;
+};
+
+/** The app's only network request that is not a model download, and it happens
+ *  on a button press. `null` means there is nothing newer. */
+export const checkForUpdate = () => invoke<UpdateInfo | null>("check_for_update");
+/** Downloads the image into Downloads, checksum verified, and returns its path. */
+export const downloadUpdate = (info: UpdateInfo) => invoke<string>("download_update", { info });
 
 export const listSamples = () => invoke<SampleInfo[]>("list_samples");
 export const playSample = (id: string) => invoke<void>("play_sample", { id });

@@ -41,8 +41,6 @@ type Context<'model> = LlamaContext<'model>;
 
 pub struct LlmTranslator {
     loaded: LoadedModel,
-    /// Kept for the prompt format, which differs between model families.
-    template: PromptTemplate,
     /// The prompt tokens the model's KV cache currently holds.
     ///
     /// Every request repeats the instruction and the conversation so far and
@@ -54,33 +52,8 @@ pub struct LlmTranslator {
     cached: Vec<LlamaToken>,
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PromptTemplate {
-    /// ChatML, as used by Qwen.
-    ChatMl,
-    /// Gemma. Two things differ and both matter: the turn markers, and the
-    /// absence of a system role - the instruction has to ride along with the
-    /// first user turn or the model never sees it.
-    Gemma,
-}
-
-impl PromptTemplate {
-    pub fn parse(name: &str) -> Option<Self> {
-        match name {
-            "chatml" => Some(Self::ChatMl),
-            "gemma" => Some(Self::Gemma),
-            _ => None,
-        }
-    }
-}
-
 impl LlmTranslator {
-    pub fn load(
-        backend: &LlamaBackend,
-        path: &Path,
-        threads: i32,
-        template: PromptTemplate,
-    ) -> Result<Self, String> {
+    pub fn load(backend: &LlamaBackend, path: &Path, threads: i32) -> Result<Self, String> {
         let params = LlamaModelParams::default();
         let model = LlamaModel::load_from_file(backend, path, &params)
             .map_err(|e| format!("could not load the model: {e}"))?;
@@ -98,7 +71,6 @@ impl LlmTranslator {
 
         Ok(Self {
             loaded,
-            template,
             cached: Vec::new(),
         })
     }
@@ -121,9 +93,8 @@ impl LlmTranslator {
         target_language: &str,
         on_delta: &mut dyn FnMut(&str),
     ) -> Result<String, String> {
-        let prompt = build_prompt(self.template, source, history, target_language);
+        let prompt = build_prompt(source, history, target_language);
 
-        let template = self.template;
         let cached = std::mem::take(&mut self.cached);
         let mut decoded: Vec<LlamaToken> = Vec::new();
 
@@ -169,7 +140,7 @@ impl LlmTranslator {
             // and only the part that is complete UTF-8 is decoded - decoding
             // every token on its own would turn Cyrillic into replacement
             // characters.
-            let mut stream = Stream::new(template);
+            let mut stream = Stream::new();
             let mut pending: Vec<u8> = Vec::new();
 
             // Generation picks up where the prompt ended, so the counter is the
@@ -215,19 +186,15 @@ impl LlmTranslator {
     }
 }
 
-fn stop_sequence(template: PromptTemplate) -> Option<&'static str> {
-    match template {
-        PromptTemplate::ChatMl => Some("<|im_end|>"),
-        PromptTemplate::Gemma => Some("<end_of_turn>"),
-    }
+/// Where the model is told to stop. ChatML closes a turn with this, and a
+/// generation that runs past it is one that has started answering itself.
+fn stop_sequence() -> Option<&'static str> {
+    Some("<|im_end|>")
 }
 
 /// Everything the model may emit that must never reach the screen.
-fn markers(template: PromptTemplate) -> &'static [&'static str] {
-    match template {
-        PromptTemplate::ChatMl => &["<|im_end|>", "<think>", "</think>"],
-        PromptTemplate::Gemma => &["<end_of_turn>", "<start_of_turn>", "<think>", "</think>"],
-    }
+fn markers() -> &'static [&'static str] {
+    &["<|im_end|>", "<think>", "</think>"]
 }
 
 /// Assembles the answer as it is generated and decides how much of it is safe
@@ -238,16 +205,14 @@ fn markers(template: PromptTemplate) -> &'static [&'static str] {
 /// than shown and then taken away. And a half-generated word reads as a typo,
 /// so text is released a whole word at a time.
 struct Stream {
-    template: PromptTemplate,
     raw: String,
     /// Bytes of the visible text already handed to the caller.
     emitted: usize,
 }
 
 impl Stream {
-    fn new(template: PromptTemplate) -> Self {
+    fn new() -> Self {
         Self {
-            template,
             raw: String::new(),
             emitted: 0,
         }
@@ -276,15 +241,15 @@ impl Stream {
 
     /// The whole translation, cleaned the same way it always was.
     fn finish(&self) -> String {
-        clean_output(&self.raw, self.template)
+        clean_output(&self.raw)
     }
 
     /// The text so far, minus anything that might still turn into a marker.
     /// Always a prefix of what `finish` will return, which is what lets the
     /// caller keep appending instead of redrawing.
     fn visible(&self) -> String {
-        let held = hold_back_partial_marker(&self.raw, markers(self.template));
-        let text = strip_markers(held, self.template);
+        let held = hold_back_partial_marker(&self.raw, markers());
+        let text = strip_markers(held);
         let text = text.trim_start();
         // A quoted answer has its quotes stripped at the end; showing one and
         // removing it later is worse than never showing it.
@@ -317,10 +282,10 @@ fn hold_back_partial_marker<'a>(text: &'a str, markers: &[&str]) -> &'a str {
 /// Removes the stop marker and the reasoning blocks that hybrid models emit
 /// even when told not to. Everything before the first unclosed `<think>` is
 /// kept, so the result only ever grows as more text arrives.
-fn strip_markers(raw: &str, template: PromptTemplate) -> String {
+fn strip_markers(raw: &str) -> String {
     let mut text = raw.to_string();
 
-    if let Some(end) = stop_sequence(template) {
+    if let Some(end) = stop_sequence() {
         if let Some(index) = text.find(end) {
             text.truncate(index);
         }
@@ -346,64 +311,25 @@ fn strip_markers(raw: &str, template: PromptTemplate) -> String {
 /// than as a block of text: the model already knows how to continue a
 /// translation dialogue, and it keeps the current sentence clearly separated
 /// from its context.
-fn build_prompt(
-    template: PromptTemplate,
-    source: &str,
-    history: &[Pair],
-    target_language: &str,
-) -> String {
+fn build_prompt(source: &str, history: &[Pair], target_language: &str) -> String {
     let instruction = instruction(target_language);
 
-    match template {
-        PromptTemplate::ChatMl => {
-            let mut prompt = format!("<|im_start|>system\n{instruction} /no_think<|im_end|>\n");
-            for pair in history {
-                prompt.push_str(&format!(
-                    "<|im_start|>user\n{}<|im_end|>\n<|im_start|>assistant\n{}<|im_end|>\n",
-                    pair.source.trim(),
-                    pair.target.trim()
-                ));
-            }
-            prompt.push_str(&format!(
-                "<|im_start|>user\n{}<|im_end|>\n<|im_start|>assistant\n",
-                source.trim()
-            ));
-            prompt
-        }
-        PromptTemplate::Gemma => {
-            // No system role: the instruction goes on the front of the first
-            // user turn, which is where Gemma's own chat template puts it.
-            let mut prompt = String::new();
-            let mut instructed = false;
-            let mut turn = |prompt: &mut String, user: &str, model: Option<&str>| {
-                prompt.push_str("<start_of_turn>user\n");
-                if !instructed {
-                    prompt.push_str(&instruction);
-                    prompt.push_str("\n\n");
-                    instructed = true;
-                }
-                prompt.push_str(user);
-                prompt.push_str("<end_of_turn>\n");
-                match model {
-                    Some(answer) => {
-                        prompt.push_str("<start_of_turn>model\n");
-                        prompt.push_str(answer);
-                        prompt.push_str("<end_of_turn>\n");
-                    }
-                    None => prompt.push_str("<start_of_turn>model\n"),
-                }
-            };
-
-            for pair in history {
-                turn(&mut prompt, pair.source.trim(), Some(pair.target.trim()));
-            }
-            turn(&mut prompt, source.trim(), None);
-            prompt
-        }
+    let mut prompt = format!("<|im_start|>system\n{instruction} /no_think<|im_end|>\n");
+    for pair in history {
+        prompt.push_str(&format!(
+            "<|im_start|>user\n{}<|im_end|>\n<|im_start|>assistant\n{}<|im_end|>\n",
+            pair.source.trim(),
+            pair.target.trim()
+        ));
     }
+    prompt.push_str(&format!(
+        "<|im_start|>user\n{}<|im_end|>\n<|im_start|>assistant\n",
+        source.trim()
+    ));
+    prompt
 }
 
-/// The one instruction, shared by every template. Captions are clauses rather
+/// The instruction the model is given. Captions are clauses rather
 /// than sentences, so the prompt says so: a fragment stays a fragment, and a
 /// sentence the speaker has not finished is not finished for them.
 fn instruction(target_language: &str) -> String {
@@ -421,8 +347,8 @@ original."
 /// Trims what the model adds around the translation: the stop marker, thinking
 /// blocks from hybrid-reasoning models, and the quotation marks it sometimes
 /// wraps the answer in despite being asked not to.
-fn clean_output(raw: &str, template: PromptTemplate) -> String {
-    let text = strip_markers(raw, template);
+fn clean_output(raw: &str) -> String {
+    let text = strip_markers(raw);
 
     let text = text.trim();
     let text = text
@@ -437,44 +363,8 @@ fn clean_output(raw: &str, template: PromptTemplate) -> String {
 mod tests {
     use super::*;
     #[test]
-    fn a_gemma_prompt_carries_the_instruction_in_its_first_user_turn() {
-        let history = vec![Pair {
-            source: "The committee met.".into(),
-            target: "Комитет собрался.".into(),
-        }];
-
-        let prompt = build_prompt(PromptTemplate::Gemma, "They voted.", &history, "Russian");
-
-        // Gemma has no system role, so the instruction rides with the first
-        // turn - and only the first.
-        assert_eq!(prompt.matches("into Russian").count(), 1);
-        assert!(prompt.starts_with("<start_of_turn>user\nYou are translating"));
-        assert!(prompt.contains("<start_of_turn>model\nКомитет собрался.<end_of_turn>"));
-        assert!(prompt.ends_with("They voted.<end_of_turn>\n<start_of_turn>model\n"));
-    }
-
-    #[test]
-    fn a_template_is_recognised_by_name() {
-        assert_eq!(PromptTemplate::parse("gemma"), Some(PromptTemplate::Gemma));
-        assert_eq!(
-            PromptTemplate::parse("chatml"),
-            Some(PromptTemplate::ChatMl)
-        );
-        assert_eq!(PromptTemplate::parse("llama"), None);
-    }
-
-    #[test]
-    fn a_gemma_answer_stops_at_its_own_marker() {
-        let cleaned = clean_output(
-            "Добрый вечер.<end_of_turn>\n<start_of_turn>",
-            PromptTemplate::Gemma,
-        );
-        assert_eq!(cleaned, "Добрый вечер.");
-    }
-
-    #[test]
     fn prompt_names_the_target_language() {
-        let prompt = build_prompt(PromptTemplate::ChatMl, "Good evening.", &[], "Russian");
+        let prompt = build_prompt("Good evening.", &[], "Russian");
 
         assert!(prompt.contains("into Russian"));
         assert!(prompt.contains("Good evening."));
@@ -488,7 +378,7 @@ mod tests {
             target: "Комитет собрался в понедельник.".into(),
         }];
 
-        let prompt = build_prompt(PromptTemplate::ChatMl, "They voted.", &history, "Russian");
+        let prompt = build_prompt("They voted.", &history, "Russian");
 
         assert!(prompt.contains("Комитет собрался в понедельник."));
         // The new sentence comes last, after the history.
@@ -497,44 +387,39 @@ mod tests {
 
     #[test]
     fn output_stops_at_the_end_marker() {
-        let cleaned = clean_output(
-            "Добрый вечер.<|im_end|>\n<|im_start|>",
-            PromptTemplate::ChatMl,
-        );
+        let cleaned = clean_output("Добрый вечер.<|im_end|>\n<|im_start|>");
         assert_eq!(cleaned, "Добрый вечер.");
     }
 
     #[test]
     fn reasoning_blocks_are_removed() {
-        let cleaned = clean_output(
-            "<think>The speaker is greeting the audience.</think>\n\nДобрый вечер.",
-            PromptTemplate::ChatMl,
-        );
+        let cleaned =
+            clean_output("<think>The speaker is greeting the audience.</think>\n\nДобрый вечер.");
         assert_eq!(cleaned, "Добрый вечер.");
     }
 
     #[test]
     fn an_unclosed_reasoning_block_does_not_leak() {
-        let cleaned = clean_output("Добрый вечер. <think>wait, maybe", PromptTemplate::ChatMl);
+        let cleaned = clean_output("Добрый вечер. <think>wait, maybe");
         assert_eq!(cleaned, "Добрый вечер.");
     }
 
     #[test]
     fn wrapping_quotes_are_dropped() {
-        let cleaned = clean_output("\"Добрый вечер.\"", PromptTemplate::ChatMl);
+        let cleaned = clean_output("\"Добрый вечер.\"");
         assert_eq!(cleaned, "Добрый вечер.");
     }
 
     #[test]
     fn quotes_inside_the_sentence_are_kept() {
-        let cleaned = clean_output("Он сказал \"да\" и ушёл.", PromptTemplate::ChatMl);
+        let cleaned = clean_output("Он сказал \"да\" и ушёл.");
         assert_eq!(cleaned, "Он сказал \"да\" и ушёл.");
     }
 
     /// Feeds `pieces` through a stream the way the token loop does and returns
     /// what the caller would have shown.
     fn stream_of(pieces: &[&str]) -> (String, String) {
-        let mut stream = Stream::new(PromptTemplate::ChatMl);
+        let mut stream = Stream::new();
         let mut shown = String::new();
         for piece in pieces {
             if let Some(delta) = stream.push(piece) {
@@ -629,7 +514,7 @@ mod tests {
 
     #[test]
     fn nothing_is_released_before_the_first_word_ends() {
-        let mut stream = Stream::new(PromptTemplate::ChatMl);
+        let mut stream = Stream::new();
         assert_eq!(stream.push("Доб"), None);
         assert_eq!(stream.push("рый"), None);
         assert_eq!(stream.push(" "), Some("Добрый ".to_string()));
@@ -671,12 +556,9 @@ mod tests {
     #[test]
     fn a_tail_that_cannot_become_a_marker_is_not_held_back() {
         assert_eq!(
-            hold_back_partial_marker("Добрый вечер.", markers(PromptTemplate::ChatMl)),
+            hold_back_partial_marker("Добрый вечер.", markers()),
             "Добрый вечер."
         );
-        assert_eq!(
-            hold_back_partial_marker("Добрый <", markers(PromptTemplate::ChatMl)),
-            "Добрый "
-        );
+        assert_eq!(hold_back_partial_marker("Добрый <", markers()), "Добрый ");
     }
 }
